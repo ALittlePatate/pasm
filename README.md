@@ -6,7 +6,7 @@ PASM is a Scripting language that i made for fun with a few constraints :
 PASM is meant for being used in C2 agents as its interpreter is small.
 
 # What pasm is not
-PASM is not a language that you daily use, it is not meant for big projects but rather for scritpting using existing API (here the Windows API's but it can get extended).
+PASM is not a language that you daily use, it is not meant for big projects but rather for scripting using existing API (here the Windows API's but it can get extended).
 
 # Usage
 ```
