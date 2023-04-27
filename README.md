@@ -13,5 +13,5 @@ PASM is not a language that you daily use, it is not meant for big projects but 
 pasm.exe code.pasm
 ```
 
-# Code exemples :
-soon
+# Code examples :
+- [keylogger](https://github.com/ALittlePatate/pasm/blob/main/examples/keylogger.pasm)
