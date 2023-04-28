@@ -9,8 +9,8 @@
 ; for (int i = 48; i < 91; i++) {
 ;     if (i >= 58 && i <= 64) {
 ;       continue;
-;      }
-;     if (GetAsyncKeyState(i)) {
+;     }
+;     if (GetAsyncKeyState(i) & 0x8000) {
 ;       printf("%c", i);
 ;     }
 ; }
@@ -32,6 +32,7 @@ add a1, 1 ; i++
 
 push a1 ; arg 1 (vKey)
 call GetAsyncKeyState
+and eax, 32768 ; 0x8000 but i haven't implemented hex yet
 cmp eax, 1
 jne numbers ; if GetAsyncKeyState was false, jump to numbers
 
@@ -42,6 +43,8 @@ call printf
 jmp numbers
 
 ; https://stackoverflow.com/a/18670716
+; note about returns : you can directly call ret from a je/jne/ja/jna/jb/jnb with "jb return".
+;                      so return cannot be used as a label.
 check:
 cmp a1, 58
 jb return ; if <
@@ -55,6 +58,3 @@ ret
 inc_and_numbers:
 add a1, 1
 call numbers
-
-return:
-ret
