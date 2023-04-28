@@ -57,4 +57,4 @@ ret
 
 inc_and_numbers:
 add a1, 1
-call numbers
+jmp numbers
