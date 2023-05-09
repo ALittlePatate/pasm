@@ -23,6 +23,9 @@
     <ClCompile Include="instructions.c">
       <Filter>instructions</Filter>
     </ClCompile>
+    <ClCompile Include="api.c">
+      <Filter>Fichiers sources</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="instruction_set.h">
@@ -36,6 +39,9 @@
     </ClInclude>
     <ClInclude Include="instructions.h">
       <Filter>instructions</Filter>
+    </ClInclude>
+    <ClInclude Include="api.h">
+      <Filter>Fichiers sources</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

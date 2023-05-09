@@ -17,5 +17,6 @@ typedef enum INSTRUCTIONS {
 	RET,
 	POP,
 	PUSH,
-	CALL
+	CALL,
+	AND
 } INSTRUCTION;

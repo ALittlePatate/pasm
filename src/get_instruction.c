@@ -2,8 +2,9 @@
 #include "main.h"
 #include <stdio.h>
 #include <string.h>
+#include <stdlib.h>
 
-const char* instructions_char[] = {"add", "sub", "mov", "cmp", "je", "jne", "jmp", "jb", "jbn", "ja", "jna", "ret", "pop", "push", "call"};
+const char* instructions_char[] = {"add", "sub", "mov", "cmp", "je", "jne", "jmp", "jb", "jbn", "ja", "jna", "ret", "pop", "push", "call", "and"};
 
 INSTRUCTION get_instruction(char* line, int* args_start_pos, int line_number) {
 	char ins[20]; //20 should be enough
@@ -19,7 +20,17 @@ INSTRUCTION get_instruction(char* line, int* args_start_pos, int line_number) {
 			ins[i] = '\0';
 			*args_start_pos = -1;
 
-			labels[num_labels] = ins;
+			for (int i = 0; i < MAX_LABEL; i++) {
+				if (labels[i] == NULL) break;
+				if (strcmp(ins, labels[i]) == 0) {
+					return LABEL;
+				}
+			}
+
+			labels[num_labels] = (char*)calloc(1, strlen(ins) + 1);
+			if (labels[num_labels] != NULL) {
+				strcpy_s(labels[num_labels], strlen(ins) + 1, ins);
+			}
 			labels_lines[num_labels] = line_number;
 			++num_labels;
 			return LABEL;
@@ -38,7 +49,7 @@ INSTRUCTION get_instruction(char* line, int* args_start_pos, int line_number) {
 	return ERROR_INSTRUCTION;
 }
 
-arguments get_args(char* line, int args_start_pos) {
+void get_args(char* line, int args_start_pos) {
 	char first_arg[256];
 	char second_arg[256];
 
@@ -47,11 +58,28 @@ arguments get_args(char* line, int args_start_pos) {
 	for (int i = args_start_pos; i < (int)strlen(line); i++) {
 		if (line[i] == '\n' || line[i] == '\0' || line[i] == ';') {
 			second_arg[j] = '\0';
+			args->arg2 = (char*)calloc(1, strlen(second_arg) + 1);
+			if (args->arg2 != NULL) {
+				strcpy_s(args->arg2, strlen(second_arg)+1, second_arg);
+			}
+
+			if (write_to_first) { //only one arg
+				first_arg[j] = '\0';
+				args->arg1 = (char*)calloc(1, strlen(first_arg) + 1);
+				if (args->arg1 != NULL) {
+					strcpy_s(args->arg1, strlen(first_arg)+1, first_arg);
+				}
+			}
+
 			break;
 		}
 
 		if (line[i] == ',') {
 			first_arg[j] = '\0';
+			args->arg1 = (char*)calloc(1, strlen(first_arg) + 1);
+			if (args->arg1 != NULL) {
+				strcpy_s(args->arg1, strlen(first_arg)+1, first_arg);
+			}
 			write_to_first = 0;
 			j = 0;
 			continue;
@@ -69,6 +97,5 @@ arguments get_args(char* line, int args_start_pos) {
 		}
 	}
 
-	arguments args = {first_arg, second_arg};
-	return args;
+	return;
 }

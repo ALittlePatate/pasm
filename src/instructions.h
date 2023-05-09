@@ -3,32 +3,34 @@
 #include <stdbool.h>
 
 typedef enum cmp_return_codes {
-	EQUAL,
-	BELOW,
-	ABOVE,
+	CMP_ERROR = -1, //unused
+	CMP_EQUAL,
+	CMP_BELOW,
+	CMP_ABOVE,
 } cmp_return_codes;
 
 typedef enum check_args_codes {
+	ARG1_WRONG,
+	ARG2_WRONG,
 	WRONG_NUMBER,
-	NOT_VALID,
 	OK
 } check_args_codes ;
-static check_args_codes last_check_args_code = OK;
+extern check_args_codes last_check_args_code;
 
-bool check_args(arguments args, int expected_num);
+bool check_args(int num_in_first);
 
-void add(arguments args);
-void sub(arguments args);
-void mov(arguments args);
-cmp_return_codes cmp(arguments args);
-bool je(arguments args);
-bool jne(arguments args);
-bool jb(arguments args);
-bool jnb(arguments args);
-bool ja(arguments args);
-bool jna(arguments args);
-void jmp(arguments args);
-void ret(arguments args);
-void pop(arguments args);
-void push(arguments args);
-void call(arguments args);
+void add();
+void sub();
+void mov();
+cmp_return_codes cmp();
+bool je();
+bool jne();
+bool jb();
+bool jnb();
+bool ja();
+bool jna();
+void jmp();
+void ret();
+void pop();
+void push();
+void call();
