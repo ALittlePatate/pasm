@@ -8,6 +8,14 @@ PASM is meant for being used in C2 agents as its interpreter is small.
 # What pasm is not
 PASM is not a language that you daily use, it is not meant for big projects but rather for scripting using existing API (here the Windows API's but it can get extended).
 
+# Current state
+At the moment i'm trying to get everything working before refactoring (there are bad practices and redundant code) and getting rid of the CRT, here is what is left to do :
+- make control flow work (ret is gonna be a pain) (i need to fix the char_read counter, strlen doing its things ig)
+- add the API
+- think of a more clever way of going through the labels and later the API (currently done in get_instruction.c and instructions.c)
+- make the stack work
+- write the docs
+
 # Usage
 ```
 pasm.exe code.pasm
