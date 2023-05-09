@@ -39,7 +39,6 @@ int main(int argc, char** argv) {
 
 	memset(&stack, 0, sizeof(stack)); //init stack
 	args = (arguments*)calloc(1, sizeof(arguments));
-	a1 = 69420;
 
 	char line[256];
 	int line_number = 1;
