@@ -24,7 +24,7 @@ numbers:
 cmp a1, 90
 je loop ; if ==
 
-call check
+jmp check
 cmp eax, 1
 je inc_and_numbers
 
