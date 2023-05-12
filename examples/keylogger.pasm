@@ -33,8 +33,8 @@ add a1, 1 ; i++
 push a1 ; arg 1 (vKey)
 call GetAsyncKeyState
 and eax, 32768 ; 0x8000 but i haven't implemented hex yet
-cmp eax, 1
-jne numbers ; if GetAsyncKeyState was false, jump to numbers
+cmp eax, 0
+je numbers ; if GetAsyncKeyState was false, jump to numbers
 
 mov a2, a1 ; necessary ?
 push "%c" ; push format
