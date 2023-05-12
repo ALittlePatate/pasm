@@ -171,5 +171,17 @@ void pop() {
 }
 
 void and() {
+	if (!check_args(1)) {
+		return;
+	}
 
+	eax = get_value(args->arg1) & get_value(args->arg2);
+}
+
+void xor () {
+	if (!check_args(1)) {
+		return;
+	}
+
+	eax = get_value(args->arg1) ^ get_value(args->arg2);
 }

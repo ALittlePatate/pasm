@@ -44,6 +44,7 @@ void pop();
 void push();
 void call();
 void and();
+void xor();
 
 static const command_t command_map[] = {
     {.command = "add", .fptr = add},
@@ -62,6 +63,7 @@ static const command_t command_map[] = {
 	{.command = "push", .fptr = push},
 	{.command = "call", .fptr = call},
 	{.command = "and", .fptr = and},
+	{.command = "xor", .fptr = xor},
 
     {.command = NULL, .fptr = NULL}
 };
