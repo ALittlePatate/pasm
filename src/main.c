@@ -2,7 +2,7 @@
 #include <string.h>
 #include <stdlib.h>
 #include "main.h"
-#include "get_instruction.h"
+#include "parser.h"
 #include "instructions.h"
 
 void show_help() {
@@ -43,7 +43,9 @@ int main(int argc, char** argv) {
 	char line[256];
 	int line_number = 1;
 	size_t char_read = 0;
+	const command_t* com = NULL;
 	while (fgets(line, sizeof(line), fptr)) {
+		com = NULL;
 		char_read += strlen(line);
 
 		if (line[0] == ';' || line[0] == '\n') {
@@ -52,68 +54,39 @@ int main(int argc, char** argv) {
 		}
 
 		int args_pos;
-		INSTRUCTION ins = get_instruction(line, &args_pos, (int)char_read);
-		if (args_pos != -1) {
+
+		char* ins = calloc(MAX_INS_LENGHT, 1);
+		
+		get_instruction(line, &args_pos, (int)char_read, &ins);
+		if (args_pos == -1) {
+			free(ins);
+			++line_number;
+			continue;
+		}
+
+		com = find_command(ins);
+		if (com != NULL) {
 			get_args(line, args_pos);
 		}
 
-		switch (ins) {
-			case SUB :
-				sub();
-				break;
-			case MOV :
-				mov();
-				break;
-			case ADD :
-				add();
-				break;
-			case CMP :
-				last_cmp_code = cmp();
-				break;
-			case JE :
-				if (je()) {
-					jmp();
-				}
-				break;
-			case JNE :
-				if (jne()) {
-					jmp();
-				}
-				break;
-			case JB :
-				if (jb()) {
-					jmp();
-				}
-				break;
-			case JNB :
-				if (jnb()) {
-					jmp();
-				}
-				break;
-			case JA :
-				if (ja()) {
-					jmp();
-				}
-				break;
-			case JNA :
-				if (jna()) {
-					jmp();
-				}
-				break;
-			case JMP :
-				jmp();
-				break;
-			case LABEL :
-				break;
-			case ERROR_INSTRUCTION:
-				printf("%s ^\n |\ninvalid operand on line %d", line, line_number);
-				free(args->arg1);
-				free(args->arg2);
-				free(args);
-				fclose(fptr);
-				return 1;
+		free(ins);
+
+		if (args == NULL || args->arg1 == NULL || args->arg2 == NULL) {
+			++line_number;
+			continue;
 		}
-		
+
+		if (com == NULL) {
+			printf("%s ^\n |\ninvalid operand on line %d", line, line_number);
+			free(args->arg1);
+			free(args->arg2);
+			free(args);
+			fclose(fptr);
+			return 1;
+		}
+
+		com->fptr();
+
 		if (last_check_args_code != OK) {
 			printf("%s", line);
 			printf("%*c ^\n", args_pos, ' ');

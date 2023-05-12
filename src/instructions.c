@@ -64,22 +64,36 @@ int get_value(char* arg) {
 	return ret;
 }
 
-cmp_return_codes cmp() {
+const command_t *find_command(char *your_var)
+{
+    if (your_var == NULL)
+        return NULL;
+    for (int index = 0; command_map[index].fptr != NULL; index += 1) {
+        if (strcmp(your_var, command_map[index].command) == 0) {
+            return &command_map[index];
+        }
+    }
+    return NULL;
+}
+
+void cmp() {
 	if (!check_args(1)) {
-		return CMP_ERROR;
+		last_cmp_code = CMP_ERROR;
+		return;
 	}
 
 	int a1_ = get_value(args->arg1);
 	int a2_ = get_value(args->arg2);
 
-	if (a1_ == a2_) return CMP_EQUAL;
-	if (a1_ > a2_) return CMP_ABOVE;
-	if (a2_ > a1_) return CMP_BELOW;
-
-	return CMP_EQUAL; //never hit but it makes the compiler happy
+	if (a1_ == a2_) last_cmp_code = CMP_EQUAL;
+	else if (a1_ > a2_) last_cmp_code = CMP_ABOVE;
+	else if (a2_ > a1_) last_cmp_code = CMP_BELOW;
+	
+	return;
 }
 
 void jmp() {
+	return;
 	for (int i = 0; i < MAX_LABEL; i++) {
 		if (labels[i] == NULL) break;
 		if (strcmp(args->arg1, labels[i]) == 0) {
@@ -92,28 +106,28 @@ void jmp() {
 	return;
 }
 
-bool jna() {
-	return last_cmp_code != CMP_ABOVE;
+void jna() {
+	if (last_cmp_code != CMP_ABOVE) jmp();
 }
 
-bool ja() {
-	return last_cmp_code == CMP_ABOVE;
+void ja() {
+	if (last_cmp_code == CMP_ABOVE) jmp();
 }
 
-bool jnb() {
-	return last_cmp_code != CMP_BELOW;
+void jnb() {
+	if (last_cmp_code != CMP_BELOW) jmp();
 }
 
-bool jb() {
-	return last_cmp_code == CMP_BELOW;
+void jb() {
+	if (last_cmp_code == CMP_BELOW) jmp();
 }
 
-bool jne() {
-	return last_cmp_code != CMP_EQUAL;
+void jne() {
+	if (last_cmp_code != CMP_EQUAL) jmp();
 }
 
-bool je() {
-	return last_cmp_code == CMP_EQUAL;
+void je() {
+	if (last_cmp_code == CMP_EQUAL) jmp();
 }
 
 void sub() {
@@ -138,4 +152,24 @@ void mov() {
 	}
 
 	*get_reg(args->arg1) = get_value(args->arg2);
+}
+
+void ret() {
+
+}
+
+void call() {
+
+}
+
+void push() {
+
+}
+
+void pop() {
+
+}
+
+void and() {
+
 }

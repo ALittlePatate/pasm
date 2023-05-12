@@ -1,52 +1,45 @@
-#include "get_instruction.h"
+#include "parser.h"
 #include "main.h"
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
 
-const char* instructions_char[] = {"add", "sub", "mov", "cmp", "je", "jne", "jmp", "jb", "jbn", "ja", "jna", "ret", "pop", "push", "call", "and"};
+void get_instruction(char* line, int* args_start_pos, int line_number, char** ins) {
+	char temp[MAX_INS_LENGHT];
+	memset(temp, 0, sizeof(temp));
 
-INSTRUCTION get_instruction(char* line, int* args_start_pos, int line_number) {
-	char ins[20]; //20 should be enough
-	memset(ins, 0, sizeof(ins));
-
-	for (int i = 0; i < (int)strlen(line); i++) {
+	for (int i = 0; i < MAX_INS_LENGHT; i++) {
 		if (line[i] == ' ' || line[i] == '\n' || line[i] == '\0') {
-			ins[i] = '\0';
+			temp[i] = '\0';
 			*args_start_pos = i + 1;
 			break;
 		}
 		if (line[i] == ':') {
-			ins[i] = '\0';
+			temp[i] = '\0';
 			*args_start_pos = -1;
+			strcpy_s(*ins, strlen(temp)+1,temp);
 
 			for (int i = 0; i < MAX_LABEL; i++) {
 				if (labels[i] == NULL) break;
-				if (strcmp(ins, labels[i]) == 0) {
-					return LABEL;
+				if (strcmp(temp, labels[i]) == 0) {
+					return;
 				}
 			}
 
-			labels[num_labels] = (char*)calloc(1, strlen(ins) + 1);
+			labels[num_labels] = (char*)calloc(1, strlen(temp) + 1);
 			if (labels[num_labels] != NULL) {
-				strcpy_s(labels[num_labels], strlen(ins) + 1, ins);
+				strcpy_s(labels[num_labels], strlen(temp) + 1, temp);
 			}
 			labels_lines[num_labels] = line_number;
 			++num_labels;
-			return LABEL;
+			return;
 		}
 
-		ins[i] = line[i];
+		temp[i] = line[i];
 	}
 	
-	for (int j = 0; j < sizeof(instructions_char)/sizeof(instructions_char[0]); j++) {
-		if (strcmp(ins, instructions_char[j]) == 0) {
-			return (INSTRUCTION)j;
-		}
-	}
-
-	*args_start_pos = -1;
-	return ERROR_INSTRUCTION;
+	strcpy_s(*ins, strlen(temp)+1,temp);
+	return;
 }
 
 void get_args(char* line, int args_start_pos) {

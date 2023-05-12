@@ -149,15 +149,14 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="api.c" />
-    <ClCompile Include="get_instruction.c" />
+    <ClCompile Include="parser.c" />
     <ClCompile Include="instructions.c" />
     <ClCompile Include="main.c" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="api.h" />
-    <ClInclude Include="get_instruction.h" />
+    <ClInclude Include="parser.h" />
     <ClInclude Include="instructions.h" />
-    <ClInclude Include="instruction_set.h" />
     <ClInclude Include="main.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

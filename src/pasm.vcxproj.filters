@@ -17,7 +17,7 @@
     <ClCompile Include="main.c">
       <Filter>Fichiers sources</Filter>
     </ClCompile>
-    <ClCompile Include="get_instruction.c">
+    <ClCompile Include="parser.c">
       <Filter>Fichiers sources</Filter>
     </ClCompile>
     <ClCompile Include="instructions.c">
@@ -28,13 +28,10 @@
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="instruction_set.h">
-      <Filter>Fichiers d%27en-tête</Filter>
-    </ClInclude>
     <ClInclude Include="main.h">
       <Filter>Fichiers sources</Filter>
     </ClInclude>
-    <ClInclude Include="get_instruction.h">
+    <ClInclude Include="parser.h">
       <Filter>Fichiers sources</Filter>
     </ClInclude>
     <ClInclude Include="instructions.h">
