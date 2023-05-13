@@ -44,8 +44,8 @@ int main(int argc, char** argv) {
 	int line_number = 1;
 	size_t char_read = 0;
 	const command_t* com = NULL;
+	int main_hit = 0;
 	while (fgets(line, sizeof(line), fptr)) {
-		com = NULL;
 		char_read += strlen(line);
 
 		if (line[0] == ';' || line[0] == '\n') {
@@ -59,6 +59,16 @@ int main(int argc, char** argv) {
 		
 		get_instruction(line, &args_pos, (int)char_read, &ins);
 		if (args_pos == -1) {
+			if (!main_hit && strcmp("main", ins) == 0) {
+				main_hit = 1;
+			}
+
+			free(ins);
+			++line_number;
+			continue;
+		}
+
+		if (!main_hit) {
 			free(ins);
 			++line_number;
 			continue;

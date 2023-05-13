@@ -93,7 +93,6 @@ void cmp() {
 }
 
 void jmp() {
-	return;
 	for (int i = 0; i < MAX_LABEL; i++) {
 		if (labels[i] == NULL) break;
 		if (strcmp(args->arg1, labels[i]) == 0) {

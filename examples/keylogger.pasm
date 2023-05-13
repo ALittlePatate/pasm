@@ -15,14 +15,30 @@
 ;     }
 ; }
 
+; https://stackoverflow.com/a/18670716
+; note about returns : you can directly call ret from a je/jne/ja/jna/jb/jnb with "jb return".
+;                      so return cannot be used as a label.
+check:
+cmp a1, 58
+jb return ; if <
 
-loop:
+cmp a1, 64
+ja return ; if >
+
+mov eax, 1
+ret
+
+inc_and_numbers:
+add a1, 1
+jmp numbers
+
+main:
 
 mov a1, 47 ;set a1 to 47
 
 numbers:
 cmp a1, 90
-je loop ; if ==
+je main ; if ==
 
 jmp check
 cmp eax, 1
@@ -40,21 +56,4 @@ mov a2, a1 ; necessary ?
 push "%c" ; push format
 push a2 ; push char
 call printf
-jmp numbers
-
-; https://stackoverflow.com/a/18670716
-; note about returns : you can directly call ret from a je/jne/ja/jna/jb/jnb with "jb return".
-;                      so return cannot be used as a label.
-check:
-cmp a1, 58
-jb return ; if <
-
-cmp a1, 64
-ja return ; if >
-
-mov eax, 1
-ret
-
-inc_and_numbers:
-add a1, 1
 jmp numbers
