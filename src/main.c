@@ -46,7 +46,7 @@ int main(int argc, char** argv) {
 	const command_t* com = NULL;
 	int main_hit = 0;
 	while (fgets(line, sizeof(line), fptr)) {
-		char_read += strlen(line);
+		char_read += strlen(line) + 1;
 
 		if (line[0] == ';' || line[0] == '\n') {
 			++line_number;
