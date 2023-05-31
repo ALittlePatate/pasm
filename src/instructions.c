@@ -184,17 +184,34 @@ void call() {
 }
 
 void push() {
-	if (!((is_num(args->arg1) || (is_reg(args->arg1))))) {
-		last_check_args_code = ARG1_WRONG;
-		return;
-	}
-
 	if (top == STACK_SIZE) { //stack overflow
 		last_stack_code = OVERFLOW;
 		return;
 	}
 
-	stack[++top] = get_value(args->arg1);
+	int value = get_value(args->arg1);
+	if (value == 0) {
+		if (args->arg1[0] == '\\') {
+			switch (args->arg1[1]) {
+				case 'n':
+					value = (int)'\n';
+					break;
+				case 't':
+					value = (int)'\t';
+					break;
+				case 'r':
+					value = (int)'\r';
+					break;
+				default:
+					break;
+			}
+		}
+		else {
+			value = (int)args->arg1[0];
+		}
+	}
+
+	stack[++top] = value;
 }
 
 void pop() {

@@ -54,4 +54,8 @@ je numbers ; if GetAsyncKeyState was false, jump to numbers
 
 push a1 ; push char
 call put
+
+push \n ; push char
+call put
+
 jmp numbers

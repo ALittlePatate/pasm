@@ -4,7 +4,7 @@
 #include <Windows.h>
 
 void api_put() {
-	printf("%c\n", stack[top--]);
+	printf("%c", stack[top--]);
 }
 
 void api_getasynckeystate() {
