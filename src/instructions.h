@@ -18,13 +18,20 @@ typedef enum check_args_codes {
 } check_args_codes ;
 extern check_args_codes last_check_args_code;
 
+typedef enum stack_codes {
+	OVERFLOW,
+	UNDERFLOW,
+	STACK_OK
+} stack_codes;
+extern stack_codes last_stack_code;
+
 //pasted from https://github.com/Sakutaroo/Templates/blob/main/C/FunctionPointer/function_pointer.h
 typedef struct command_s {
     char *command;
     void (*fptr)();
 } command_t;
 
-const command_t *find_command(char *your_var);
+const command_t* find_command(char* your_var, const command_t* func_map);
 
 bool check_args(int num_in_first);
 

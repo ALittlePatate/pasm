@@ -10,15 +10,19 @@ void show_help() {
 }
 
 arguments* args = NULL;
-int stack[9] = {0*9};
+int stack[STACK_SIZE] = {0*STACK_SIZE};
+int top = -1;
 int a1, a2, a3, a4, a5, a6, a7, a8, a9, eax = 0;
 char* labels[256] = {0*256};
 int labels_lines[256] = {0*256};
 int num_labels = 0;
 FILE* fptr = NULL;
 last_jmp_code = 0;
+stack_codes last_stack_code = STACK_OK;
 cmp_return_codes last_cmp_code = CMP_EQUAL;
 last_check_args_code = OK; //init error code
+size_t char_read = 0;
+int exit_code = 0;
 int main(int argc, char** argv) {
 	if (argc != 2) {
 		printf("Bad arguments.\n");
@@ -41,10 +45,9 @@ int main(int argc, char** argv) {
 	args = (arguments*)calloc(1, sizeof(arguments));
 
 	char line[256];
-	int line_number = 1;
-	size_t char_read = 0;
 	const command_t* com = NULL;
 	int main_hit = 0;
+	int line_number = 1;
 	while (fgets(line, sizeof(line), fptr)) {
 		char_read += strlen(line) + 1;
 
@@ -74,7 +77,7 @@ int main(int argc, char** argv) {
 			continue;
 		}
 
-		com = find_command(ins);
+		com = find_command(ins, command_map);
 		if (com != NULL) {
 			get_args(line, args_pos);
 		}
@@ -130,6 +133,21 @@ int main(int argc, char** argv) {
 			free(args->arg2);
 			free(args);
 			return 1;
+		}
+
+		if (last_stack_code != STACK_OK) {
+			printf("%s ^\n |\nstack %s on line %d", line, last_stack_code == OVERFLOW ? "overflow" : "underflow", line_number);
+			free(args->arg1);
+			free(args->arg2);
+			free(args);
+			return 1;
+		}
+
+		if (exit_code) {
+			free(args->arg1);
+			free(args->arg2);
+			free(args);
+			return 0;
 		}
 
 		++line_number;

@@ -1,5 +1,6 @@
 #include "instructions.h"
 #include "main.h"
+#include "api.h"
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -64,13 +65,13 @@ int get_value(char* arg) {
 	return ret;
 }
 
-const command_t *find_command(char *your_var)
+const command_t *find_command(char *your_var, const command_t* func_map)
 {
     if (your_var == NULL)
         return NULL;
-    for (int index = 0; command_map[index].fptr != NULL; index += 1) {
-        if (strcmp(your_var, command_map[index].command) == 0) {
-            return &command_map[index];
+    for (int index = 0; func_map[index].fptr != NULL; index += 1) {
+        if (strcmp(your_var, func_map[index].command) == 0) {
+            return &func_map[index];
         }
     }
     return NULL;
@@ -92,11 +93,30 @@ void cmp() {
 	return;
 }
 
+int line_should_ret = -1;
+void ret() {
+	if (line_should_ret == -1) {
+		exit_code = 1;
+		return;
+	}
+
+	
+	fseek(fptr, line_should_ret, SEEK_SET);
+}
+
 void jmp() {
+	if (strcmp(args->arg1, "return") == 0) {
+		ret();
+		return;
+	}
+
+	eax = 0;
 	for (int i = 0; i < MAX_LABEL; i++) {
 		if (labels[i] == NULL) break;
 		if (strcmp(args->arg1, labels[i]) == 0) {
+			line_should_ret = (int)char_read;
 			fseek(fptr, labels_lines[i], SEEK_SET);
+			(int)char_read = labels_lines[i];
 			return;
 		}
 	}
@@ -153,20 +173,37 @@ void mov() {
 	*get_reg(args->arg1) = get_value(args->arg2);
 }
 
-void ret() {
-
-}
-
 void call() {
-
+	const command_t* com = find_command(args->arg1, api_map);
+	if (com != NULL) {
+		com->fptr();
+	}
+	else {
+		last_jmp_code = 1;
+	}
 }
 
 void push() {
+	if (!((is_num(args->arg1) || (is_reg(args->arg1))))) {
+		last_check_args_code = ARG1_WRONG;
+		return;
+	}
 
+	if (top == STACK_SIZE) { //stack overflow
+		last_stack_code = OVERFLOW;
+		return;
+	}
+
+	stack[++top] = get_value(args->arg1);
 }
 
 void pop() {
+	if (top == -1) { //stack underflow
+		last_stack_code = UNDERFLOW;
+		return;
+	}
 
+	--top;
 }
 
 void and() {

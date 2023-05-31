@@ -48,7 +48,7 @@ void get_args(char* line, int args_start_pos) {
 
 	int write_to_first = 1; //ugly hack but whatever
 	int j = 0;
-	for (int i = args_start_pos; i < (int)strlen(line); i++) {
+	for (int i = args_start_pos; i < (int)strlen(line)+1; i++) {
 		if (line[i] == '\n' || line[i] == '\0' || line[i] == ';') {
 			second_arg[j] = '\0';
 			args->arg2 = (char*)calloc(1, strlen(second_arg) + 1);

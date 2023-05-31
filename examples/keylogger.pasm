@@ -19,10 +19,10 @@
 ; note about returns : you can directly call ret from a je/jne/ja/jna/jb/jnb with "jb return".
 ;                      so return cannot be used as a label.
 check:
-cmp a1, 58
+cmp a1, 57
 jb return ; if <
 
-cmp a1, 64
+cmp a1, 63
 ja return ; if >
 
 mov eax, 1
@@ -48,12 +48,11 @@ add a1, 1 ; i++
 
 push a1 ; arg 1 (vKey)
 call GetAsyncKeyState
-and eax, 32768 ; 0x8000 but i haven't implemented hex yet
+and eax, 1
 cmp eax, 0
 je numbers ; if GetAsyncKeyState was false, jump to numbers
 
 mov a2, a1 ; necessary ?
-push "%c" ; push format
 push a2 ; push char
-call printf
+call put
 jmp numbers

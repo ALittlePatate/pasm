@@ -1,2 +1,2 @@
 # keylogger
-This is a POC, i don't even know if it works as the interpreter and scripts are in very early stages
+Will output the pressed key. Works for keys from A-Z and 0-9.
