@@ -198,12 +198,17 @@ void push() {
 }
 
 void pop() {
+	if (!is_reg(args->arg1)) {
+		last_check_args_code = ARG1_WRONG;
+		return;
+	}
+
 	if (top == -1) { //stack underflow
 		last_stack_code = UNDERFLOW;
 		return;
 	}
 
-	--top;
+	*get_reg(args->arg1) = stack[top--];
 }
 
 void and() {
