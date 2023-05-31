@@ -52,7 +52,6 @@ and eax, 1
 cmp eax, 0
 je numbers ; if GetAsyncKeyState was false, jump to numbers
 
-mov a2, a1 ; necessary ?
-push a2 ; push char
+push a1 ; push char
 call put
 jmp numbers
