@@ -16,6 +16,9 @@ TODO :
 - get rid of the CRT (so we can get a smaller PE)
 - write the docs
 
+# Documentation
+The documentation is available [here](https://github.com/ALittlePatate/pasm/blob/main/docs/documentation.md), it *should* cover everything you have to know before writing scripts.
+
 # Usage
 ```
 pasm.exe code.pasm
