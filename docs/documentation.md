@@ -1,7 +1,7 @@
 # Docs 
 This is the documentation for the PASM scripting language. <br>
 Please note it is still in a very early stages so a lot of features you'd except in a scripting language like this one may not be present at the moment.<br>
-For more informations please read the [readme](https://github.com/ALittlePatate/pasm).
+For more informations please read the [readme](https://github.com/ALittlePatate/pasm/blob/main/README.md).
 
 # Table of Contents
 1. [Creating a script](#creating-a-script)<br>
@@ -9,7 +9,7 @@ For more informations please read the [readme](https://github.com/ALittlePatate/
     b. [Registers](#registers)<br>
     c. [Syntax](#syntax)<br>
     c bis. [Note about return](#note-about-return)<br>
-    d. [Calling APIs](calling-apis)<br>
+    d. [Calling APIs](#calling-apis)<br>
 2. [Errors](#errors)<br>
 3. [Running a script](#running-a-script)<br>
 4. [Contributing](#contributing)<br>
