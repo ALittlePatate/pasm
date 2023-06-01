@@ -122,6 +122,8 @@ Here is a list of all the errors you can encounter and how to fix them :
 * `wrong number of arguments on line X` : you have more or less arguments needed for an operand, see [table](#syntax).
 * `arg1/arg2 is invalid on line X` : the operand used can't work with the type of argument provided (register/number/char)
 * `X is not a valid label/api` : you tried to jump (`jmp`) or `call` an undefined label or non-existing API. Check [Scripts structure](scripts-structure).
+* `stack overflow on line X` : you pushed to many times without poping.
+* `stack underflow on line X` : you poped to many times without pushing.
 
 ## Running a script
 Usage : `pasm.exe script.pasm`.
