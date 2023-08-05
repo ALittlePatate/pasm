@@ -164,7 +164,7 @@ int main(int argc, char** argv) {
 	free(args);
 	fclose(fptr);
 
-    printf("Program finished, states :\n");
+    printf("\n\nProgram finished, states :\n");
     
     printf("Stack : ");
     for (int i = 0; i < STACK_SIZE; i++) {
