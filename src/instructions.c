@@ -6,7 +6,7 @@
 #include <string.h>
 
 int RET_STACK[STACK_SIZE] = {-1*STACK_SIZE};
-int RET_STACK_IDX = 0;
+int RET_STACK_IDX = -1;
 bool is_reg(char* arg) {
 	return (strcmp(arg, "eax") == 0) || (((arg[0] == 'a' && '0' <= arg[1] <= '9')) && strlen(arg) == 2);
 }
@@ -120,7 +120,7 @@ void ret() {
 }
 
 void jmp() {
-	if (!CheckRetStack()) return;
+	if (RET_STACK_IDX != -1 && !CheckRetStack()) return;
 
 	if (strcmp(args->arg1, "return") == 0) {
 		ret();
@@ -131,7 +131,7 @@ void jmp() {
 	for (int i = 0; i < MAX_LABEL; i++) {
 		if (labels[i] == NULL) break;
 		if (strcmp(args->arg1, labels[i]) == 0) {
-            RET_STACK[RET_STACK_IDX++] = (int)char_read;
+            RET_STACK[++RET_STACK_IDX] = (int)char_read;
 			fseek(fptr, labels_lines[i], SEEK_SET);
 			char_read = labels_lines[i];
 			return;
