@@ -2,7 +2,7 @@
 #include "instructions.h"
 #include <stdio.h>
 #define MAX_LABEL 256
-#define STACK_SIZE 9
+#define STACK_SIZE 50
 
 extern int top;
 extern int stack[STACK_SIZE];
