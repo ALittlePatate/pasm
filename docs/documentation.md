@@ -95,22 +95,6 @@ Note that return can be used in a conditional jump like so :
 cmp a1, 5
 je return ; note it's return and not ret when used like this
 ```
-Due to current limitations, you can't jump to more than one function and return to the right place. Example :
-```asm
-bar:
-add a1, 2
-ret
-
-foo:
-add a1, 3
-jmp bar
-ret
-
-main:
-jmp foo
-; more code
-```
-Here `foo` will never return to the main function and will instead return to `ret`. TOFIX !!
 
 ### Calling APIs
 APIs can be added in the [api.c](https://github.com/ALittlePatate/pasm/blob/main/src/api.c) and [api.h](https://github.com/ALittlePatate/pasm/blob/main/src/api.h) files.
@@ -124,7 +108,7 @@ Here is a list of all the errors you can encounter and how to fix them :
 * `wrong number of arguments on line X` : you have more or less arguments needed for an operand, see [table](#syntax).
 * `arg1/arg2 is invalid on line X` : the operand used can't work with the type of argument provided (register/number/char)
 * `X is not a valid label/api` : you tried to jump (`jmp`) or `call` an undefined label or non-existing API. Check [Scripts structure](scripts-structure).
-* `stack overflow on line X` : you pushed to many times without poping.
+* `stack overflow on line X` : you pushed to many times without poping or you reached the recursion depth limit.
 * `stack underflow on line X` : you poped to many times without pushing.
 
 ## Running a script

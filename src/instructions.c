@@ -5,6 +5,8 @@
 #include <stdlib.h>
 #include <string.h>
 
+int RET_STACK[STACK_SIZE] = {-1*STACK_SIZE};
+int RET_STACK_IDX = 0;
 bool is_reg(char* arg) {
 	return (strcmp(arg, "eax") == 0) || (((arg[0] == 'a' && '0' <= arg[1] <= '9')) && strlen(arg) == 2);
 }
@@ -93,17 +95,33 @@ void cmp() {
 	return;
 }
 
-int line_should_ret = -1;
+int CheckRetStack() {
+	if (RET_STACK_IDX > STACK_SIZE) {
+		last_stack_code = OVERFLOW;
+		return 0;
+	}
+	if (RET_STACK_IDX < 0) {
+		last_stack_code = UNDERFLOW;
+		return 0;
+	}
+	
+	return 1;
+}
+
 void ret() {
-	if (line_should_ret == -1) {
+	if (!CheckRetStack()) return;
+	
+	if (RET_STACK[RET_STACK_IDX] == -1) {
 		exit_code = 1;
 		return;
 	}
 
-	fseek(fptr, line_should_ret, SEEK_SET);
+	fseek(fptr, RET_STACK[RET_STACK_IDX--], SEEK_SET);
 }
 
 void jmp() {
+	if (!CheckRetStack()) return;
+
 	if (strcmp(args->arg1, "return") == 0) {
 		ret();
 		return;
@@ -113,7 +131,7 @@ void jmp() {
 	for (int i = 0; i < MAX_LABEL; i++) {
 		if (labels[i] == NULL) break;
 		if (strcmp(args->arg1, labels[i]) == 0) {
-			line_should_ret = (int)char_read;
+            RET_STACK[RET_STACK_IDX++] = (int)char_read;
 			fseek(fptr, labels_lines[i], SEEK_SET);
 			char_read = labels_lines[i];
 			return;
