@@ -23,8 +23,44 @@ cmp_return_codes last_cmp_code = CMP_EQUAL;
 check_args_codes last_check_args_code = OK; //init error code
 size_t char_read = 0;
 int exit_code = 0;
+
+void show_states() {
+    printf("Stack : ");
+    for (int i = 0; i < STACK_SIZE; i++) {
+      printf("%d ", stack[i]);
+    }
+    printf("\n\n");
+
+    printf("Registers :\n");
+    printf("a1 %d\n", a1);
+    printf("a2 %d\n", a2);
+    printf("a3 %d\n", a3);
+    printf("a4 %d\n", a4);
+    printf("a5 %d\n", a5);
+    printf("a6 %d\n", a6);
+    printf("a7 %d\n", a7);
+    printf("a8 %d\n", a8);
+    printf("a9 %d\n", a9);
+    printf("eax %d\n", eax);
+}
+
+void debug_screen() {
+	char com[10];
+	
+	printf("--> ");
+	scanf("%9s", com);
+	printf("\n");
+
+	if (strcmp(com, "c") == 0) return;
+	if (strcmp(com, "states") == 0) show_states();
+	else if (is_reg(com)) printf("[%s] %d\n", com, *get_reg(com));
+
+	debug_screen();
+}
+
 int main(int argc, char** argv) {
-	if (argc != 2) {
+	int debug_mode = 0;
+	if (argc < 2) {
 		printf("Bad arguments.\n");
 		show_help();
 		return 1;
@@ -33,6 +69,11 @@ int main(int argc, char** argv) {
 	if (strcmp(argv[1], "help") == 0) {
 		show_help();
 		return 1;
+	}
+	
+	if (argc >= 3 && strcmp(argv[2], "debug") == 0) {
+		debug_mode = 1;
+		printf("Debug mode\n");
 	}
 
     #ifdef _WIN32
@@ -86,6 +127,12 @@ int main(int argc, char** argv) {
 		}
 
 		com = find_command(ins, command_map);
+
+		if (debug_mode) {
+			printf("%s", line);
+			debug_screen();
+		}
+		
 		if (com != NULL) {
 			get_args(line, args_pos);
 		}
@@ -162,24 +209,7 @@ int main(int argc, char** argv) {
 	fclose(fptr);
 
     printf("\n\nProgram finished, states :\n");
-    
-    printf("Stack : ");
-    for (int i = 0; i < STACK_SIZE; i++) {
-      printf("%d ", stack[i]);
-    }
-    printf("\n\n");
-
-    printf("Registers :\n");
-    printf("a1 %d\n", a1);
-    printf("a2 %d\n", a2);
-    printf("a3 %d\n", a3);
-    printf("a4 %d\n", a4);
-    printf("a5 %d\n", a5);
-    printf("a6 %d\n", a6);
-    printf("a7 %d\n", a7);
-    printf("a8 %d\n", a8);
-    printf("a9 %d\n", a9);
-    printf("eax %d\n", eax);
+	show_states();
 
 	return 0;
 }

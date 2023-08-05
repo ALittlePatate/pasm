@@ -33,7 +33,9 @@ typedef struct command_s {
 
 const command_t* find_command(char* your_var, const command_t* func_map);
 
+bool is_reg(char* arg);
 bool check_args(int num_in_first);
+int* get_reg(char* arg);
 
 void add();
 void sub();
