@@ -82,6 +82,7 @@ The syntax is very close to x86 Intel Assembly. Here is a list of the operands a
 | **jna** foo      | Jumps to `foo` if `cmp` didn't return `CMP_ABOVE` | no |
 | **jmp** foo      | Jumps to `foo`                                    | no |
 | **ret**          | Returns from the callee to the caller             | no |
+| **end**          | Ends the program                                  | no |
 | **pop** a1       | Pops the first element of the stack into a1       | no |
 | **push** 69      | Pushes the value 69 to the top of the stack       | no |
 | **call** put     | Calls the `put` API                               | yes/no |

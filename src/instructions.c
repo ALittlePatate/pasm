@@ -276,3 +276,7 @@ void xor () {
 
 	eax = get_value(args->arg1) ^ get_value(args->arg2);
 }
+
+void end() {
+	exit_code = 1;
+}

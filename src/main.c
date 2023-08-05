@@ -152,10 +152,7 @@ int main(int argc, char** argv) {
 		}
 
 		if (exit_code) {
-			free(args->arg1);
-			free(args->arg2);
-			free(args);
-			return 0;
+			break;
 		}
 
 		++line_number;
