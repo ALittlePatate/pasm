@@ -17,10 +17,10 @@ char* labels[256] = {0*256};
 int labels_lines[256] = {0*256};
 int num_labels = 0;
 FILE* fptr = NULL;
-last_jmp_code = 0;
+int last_jmp_code = 0;
 stack_codes last_stack_code = STACK_OK;
 cmp_return_codes last_cmp_code = CMP_EQUAL;
-last_check_args_code = OK; //init error code
+check_args_codes last_check_args_code = OK; //init error code
 size_t char_read = 0;
 int exit_code = 0;
 int main(int argc, char** argv) {
@@ -35,7 +35,11 @@ int main(int argc, char** argv) {
 		return 1;
 	}
 
+    #ifdef _WIN32
 	fopen_s(&fptr, argv[1], "r");
+    #else
+    fptr = fopen(argv[1], "r");
+    #endif
 	if (fptr == NULL) {
 		printf("File %s does not exist.", argv[1]);
 		return 1;
@@ -49,7 +53,11 @@ int main(int argc, char** argv) {
 	int main_hit = 0;
 	int line_number = 1;
 	while (fgets(line, sizeof(line), fptr)) {
-		char_read += strlen(line) + 1;
+        #ifdef _WIN32
+        char_read += strlen(line) + 1; //\r\n
+        #else
+        char_read += strlen(line); // \n
+        #endif
 
 		if (line[0] == ';' || line[0] == '\n') {
 			++line_number;
@@ -155,6 +163,26 @@ int main(int argc, char** argv) {
 
 	free(args);
 	fclose(fptr);
+
+    printf("Program finished, states :\n");
+    
+    printf("Stack : ");
+    for (int i = 0; i < STACK_SIZE; i++) {
+      printf("%d ", stack[i]);
+    }
+    printf("\n\n");
+
+    printf("Registers :\n");
+    printf("a1 %d\n", a1);
+    printf("a2 %d\n", a2);
+    printf("a3 %d\n", a3);
+    printf("a4 %d\n", a4);
+    printf("a5 %d\n", a5);
+    printf("a6 %d\n", a6);
+    printf("a7 %d\n", a7);
+    printf("a8 %d\n", a8);
+    printf("a9 %d\n", a9);
+    printf("eax %d\n", eax);
 
 	return 0;
 }

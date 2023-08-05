@@ -100,7 +100,6 @@ void ret() {
 		return;
 	}
 
-	
 	fseek(fptr, line_should_ret, SEEK_SET);
 }
 
@@ -116,7 +115,7 @@ void jmp() {
 		if (strcmp(args->arg1, labels[i]) == 0) {
 			line_should_ret = (int)char_read;
 			fseek(fptr, labels_lines[i], SEEK_SET);
-			(int)char_read = labels_lines[i];
+			char_read = labels_lines[i];
 			return;
 		}
 	}
@@ -163,6 +162,22 @@ void add() {
 	}
 
 	*get_reg(args->arg1) += get_value(args->arg2);
+}
+
+void mul() {
+	if (!check_args(0)) {
+		return;
+	}
+
+	*get_reg(args->arg1) *= get_value(args->arg2);
+}
+
+void _div() {
+	if (!check_args(0)) {
+		return;
+	}
+
+	*get_reg(args->arg1) /= get_value(args->arg2);
 }
 
 void mov() {

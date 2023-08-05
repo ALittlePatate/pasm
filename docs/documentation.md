@@ -68,6 +68,8 @@ The syntax is very close to x86 Intel Assembly. Here is a list of the operands a
 | :---:            |   :----:              |   :---:       |
 | **add** a1, a2   | Adds a2 to a1         | no            |
 | **sub** a1, a2   | Substract a2 from a1  | no            |
+| **mul** a1, a2   | Multiplies a2 with a1 | no            |
+| **div** a1, a2   | Divides a2 from a1    | no            |
 | **and** a1, a2   | Performs a bitwise AND between a1 and a2. Stores the result in eax. | yes |
 | **xor** a1, a2   | Performs a XOR opration between a1 and a2. Stores the result in eax.| yes |
 | **mov** a1, a2   | Moves the value stored in a2 in a1 | no |

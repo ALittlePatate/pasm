@@ -37,6 +37,8 @@ bool check_args(int num_in_first);
 
 void add();
 void sub();
+void mul();
+void _div();
 void mov();
 void cmp();
 void je();
@@ -56,6 +58,8 @@ void xor();
 static const command_t command_map[] = {
     {.command = "add", .fptr = add},
 	{.command = "sub", .fptr = sub},
+	{.command = "mul", .fptr = mul},
+	{.command = "div", .fptr = _div},
 	{.command = "mov", .fptr = mov},
 	{.command = "cmp", .fptr = cmp},
 	{.command = "je", .fptr = je},

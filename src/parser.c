@@ -17,8 +17,12 @@ void get_instruction(char* line, int* args_start_pos, int line_number, char** in
 		if (line[i] == ':') {
 			temp[i] = '\0';
 			*args_start_pos = -1;
+            #ifdef _WIN21
 			strcpy_s(*ins, strlen(temp)+1,temp);
-
+            #else
+            strcpy(*ins, temp);
+            #endif
+            
 			for (int i = 0; i < MAX_LABEL; i++) {
 				if (labels[i] == NULL) break;
 				if (strcmp(temp, labels[i]) == 0) {
@@ -28,7 +32,11 @@ void get_instruction(char* line, int* args_start_pos, int line_number, char** in
 
 			labels[num_labels] = (char*)calloc(1, strlen(temp) + 1);
 			if (labels[num_labels] != NULL) {
+                #ifdef _WIN32
 				strcpy_s(labels[num_labels], strlen(temp) + 1, temp);
+                #else
+                strcpy(labels[num_labels], temp);
+                #endif
 			}
 			labels_lines[num_labels] = line_number;
 			++num_labels;
@@ -38,7 +46,12 @@ void get_instruction(char* line, int* args_start_pos, int line_number, char** in
 		temp[i] = line[i];
 	}
 	
+    #ifdef _WIN32
 	strcpy_s(*ins, strlen(temp)+1,temp);
+    #else
+    strcpy(*ins, temp);
+    #endif
+
 	return;
 }
 
@@ -53,14 +66,22 @@ void get_args(char* line, int args_start_pos) {
 			second_arg[j] = '\0';
 			args->arg2 = (char*)calloc(1, strlen(second_arg) + 1);
 			if (args->arg2 != NULL) {
+                #ifdef _WIN32
 				strcpy_s(args->arg2, strlen(second_arg)+1, second_arg);
+                #else
+                strcpy(args->arg2, second_arg);
+                #endif
 			}
 
 			if (write_to_first) { //only one arg
 				first_arg[j] = '\0';
 				args->arg1 = (char*)calloc(1, strlen(first_arg) + 1);
 				if (args->arg1 != NULL) {
+                    #ifdef _WIN32
 					strcpy_s(args->arg1, strlen(first_arg)+1, first_arg);
+                    #else
+                    strcpy(args->arg1, first_arg);
+                    #endif
 				}
 			}
 
@@ -71,7 +92,11 @@ void get_args(char* line, int args_start_pos) {
 			first_arg[j] = '\0';
 			args->arg1 = (char*)calloc(1, strlen(first_arg) + 1);
 			if (args->arg1 != NULL) {
+                #ifdef _WIN32
 				strcpy_s(args->arg1, strlen(first_arg)+1, first_arg);
+                #else
+                strcpy(args->arg1, first_arg);
+                #endif
 			}
 			write_to_first = 0;
 			j = 0;
