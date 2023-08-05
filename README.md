@@ -16,6 +16,10 @@ TODO :
 - code refactor (still bad practices)
 - get rid of the CRT (so we can get a smaller PE)
 
+TOFIX :
+- line number when calling functions
+- ret stack bug
+
 # Documentation
 The documentation is available [here](https://github.com/ALittlePatate/pasm/blob/main/docs/documentation.md), it *should* cover everything you have to know before writing scripts.
 

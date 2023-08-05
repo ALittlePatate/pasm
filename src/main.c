@@ -6,7 +6,7 @@
 #include "instructions.h"
 
 void show_help() {
-	printf("usage : pasm.exe [filename]");
+	printf("usage : pasm.exe filename [debug]");
 }
 
 arguments* args = NULL;

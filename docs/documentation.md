@@ -11,8 +11,9 @@ For more informations please read the [readme](https://github.com/ALittlePatate/
     c bis. [Note about return](#note-about-return)<br>
     d. [Calling APIs](#calling-apis)<br>
 2. [Errors](#errors)<br>
-3. [Running a script](#running-a-script)<br>
-4. [Contributing](#contributing)<br>
+3. [Debugging](#debugging)<br>
+4. [Running a script](#running-a-script)<br>
+5. [Contributing](#contributing)<br>
 
 ## Creating a script
 The PASM interpreter will try to run any file even without the `.pasm` extension but for good practice it is good to only code inside of `.pasm` files.
@@ -111,6 +112,16 @@ Here is a list of all the errors you can encounter and how to fix them :
 * `X is not a valid label/api` : you tried to jump (`jmp`) or `call` an undefined label or non-existing API. Check [Scripts structure](scripts-structure).
 * `stack overflow on line X` : you pushed to many times without poping or you reached the recursion depth limit.
 * `stack underflow on line X` : you poped to many times without pushing.
+
+## Debugging
+You can debug your script using the `debug` flag : <br>
+```pasm script.pasm debug```<br>
+Debug mode only supports step-by-step execution for now.<br>
+
+In debug mode, there are 3 commands :
+* `c` : continues the execution
+* `states` : shows the stack and all the registers
+* `eax` : put the name of whatever register you want and you'll get the value of it
 
 ## Running a script
 Usage : `pasm.exe script.pasm`.
