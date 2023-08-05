@@ -10,7 +10,7 @@ PASM is not a language that you daily use, it is not meant for big projects but 
 
 # Current state
 PASM is in a working state, the [keylogger example](#code-examples) works like a charm.
-The interpreter works for linux as well, but some API's are Windows oly (for now).
+The interpreter works for linux as well, but some API's are Windows only (for now).
 
 TODO :
 - code refactor (still bad practices)
