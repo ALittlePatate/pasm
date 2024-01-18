@@ -2,12 +2,12 @@ SRC = 	lib_use.c
 OBJ = $(SRC:.c=.o)
 NAME = lib_use
 CFLAGS = -Wall -Wextra -Wpedantic -I../include
-CLIBS = ../libpasm.a
+CLIBS = ../build/libpasm.a
 
 all:	$(NAME)
 
 $(NAME): $(OBJ)
-	cd .. && $(MAKE) lib
+	-cd .. && $(MAKE) lib
 	gcc $(SRC) $(CFLAGS) $(CLIBS) -o $(NAME)
 
 clean:
