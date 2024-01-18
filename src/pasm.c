@@ -49,13 +49,13 @@ int check_errors(char *line) {
 
     if (state->last_jmp_code) {
 	show_error(state->curr_line, line);
-	fprintf(fstream, "%s is not a valid label/api", state->args->arg1);
+	fprintf(fstream, "%s is not a valid label/api\n", state->args->arg1);
 	return 1;
     }
 
     if (state->last_stack_code != STACK_OK) {
 	show_error(state->curr_line, line);
-	fprintf(fstream, "stack %s on line %d",
+	fprintf(fstream, "stack %s on line %d\n",
 		state->last_stack_code == OVERFLOW ? "overflow" : "underflow", state->curr_line + 1);
 	return 1;
     }
