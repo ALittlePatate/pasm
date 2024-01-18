@@ -1,0 +1,8 @@
+.vs
+.git
+x64/
+build/
+*.a
+*.o
+pasm
+lib_use
