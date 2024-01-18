@@ -17,7 +17,7 @@ TODO :
 - get rid of the CRT (so we can get a smaller PE)
 
 # Documentation
-The documentation is available [here](https://github.com/ALittlePatate/pasm/blob/main/docs/documentation.md), it *should* cover everything you have to know before writing scripts.
+The documentation is available [here](docs/documentation.md), it *should* cover everything you have to know before writing scripts.
 
 # Usage
 ## Interpreter
@@ -30,7 +30,7 @@ pasm.exe code.pasm
 ```
 make lib 
 ```
-Then link the library to your program, see [this example](https://github.com/ALittlePatate/pasm/blob/main/tests/lib_use.c).<br>
+Then link the library to your program, see [this example](tests/lib_use.c).<br>
 
-# Code examples :
-- [functions test](https://github.com/ALittlePatate/pasm/blob/main/examples/test.pasm)
+# Code examples
+- [functions test](examples/test.pasm)
