@@ -5,20 +5,21 @@ SRC = 	src/pasm.c \
 	src/api.c
 OBJ = $(SRC:.c=.o)
 NAME = pasm
-CFLAGS = -Wall -Wextra -Wpedantic -Iinclude
+CC = gcc
+CFLAGS = -Wall -Wextra -Wpedantic -Iinclude -s -Os -fno-ident -fno-asynchronous-unwind-tables
 CLIBS =
 
 all:	$(NAME)
 
 lib: $(OBJ)
-	mkdir build
+	@-mkdir build
 	ar rc build/lib$(NAME).a $(OBJ)
 
 $(NAME): fclean
 $(NAME): lib
 $(NAME): CLIBS += build/lib$(NAME).a
 $(NAME):
-	gcc tests/interpreter.c $(CFLAGS) $(CLIBS) -o build/$(NAME)
+	$(CC) tests/interpreter.c $(CFLAGS) $(CLIBS) -o build/$(NAME)
 
 interpreter: $(NAME)
 
@@ -27,12 +28,12 @@ debug: CFLAGS += -DDEBUG -g3
 debug: $(NAME)
 
 clean:
-	rm -f $(OBJ)
-	cd tests && $(MAKE) clean
+	@-rm -f $(OBJ)
+	@-cd tests && $(MAKE) clean
 
 fclean: clean
-	rm -rf build/
-	cd tests && $(MAKE) fclean
+	@-rm -rf build/
+	@-cd tests && $(MAKE) fclean
 
 re: fclean
 re: $(NAME)

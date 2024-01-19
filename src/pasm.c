@@ -7,7 +7,11 @@
 
 FILE *fstream = NULL;
 void show_error(size_t line, char *line_) {
+#ifdef _WIN32
+    int wrote = fprintf(fstream, "%ud| ", line + 1);
+#else
     int wrote = fprintf(fstream, "%ld| ", line + 1);
+#endif
     fprintf(fstream, "%s\n", line_);
     fprintf(fstream, "%*s\n", wrote + 1, "^");
     fprintf(fstream, "%*s\n", wrote + 1, "|");

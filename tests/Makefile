@@ -1,22 +1,26 @@
-SRC = 	lib_use.c
+SRC = 	lib_use.c \
+		fmemopen.c
 OBJ = $(SRC:.c=.o)
 NAME = lib_use
-CFLAGS = -Wall -Wextra -Wpedantic -I../include
+CC = gcc
+CFLAGS = -Wall -Wextra -Wpedantic -Iinclude -s -Os -fno-ident -fno-asynchronous-unwind-tables
 CLIBS = ../build/libpasm.a
 
 all:	$(NAME)
 
 $(NAME): $(OBJ)
-	-cd .. && $(MAKE) lib
-	gcc $(SRC) $(CFLAGS) $(CLIBS) -o $(NAME)
+	$(MAKE) -C .. lib 
+	$(CC) $(OBJ) $(CFLAGS) $(CLIBS) -o $(NAME)
 
 clean:
-	rm -f $(OBJ)
+	@-rm -f $(OBJ)
 
 fclean: clean
-	rm -f $(NAME)
+	@-rm -f $(NAME)
 
 re: fclean
-re: $(NAME)
+re:
+	$(MAKE) -C .. fclean && $(MAKE) -C .. lib
+	$(CC) $(SRC) $(CFLAGS) $(CLIBS) -o $(NAME)
 
 .PHONY : all $(NAME) clean fclean re

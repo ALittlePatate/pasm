@@ -28,7 +28,7 @@ void api_put() {
 
 void api_getasynckeystate() {
     #ifdef _WIN32
-	eax = GetAsyncKeyState(state->STACK[STACK_IDX--]);
+	state->registers->eax = GetAsyncKeyState(state->STACK[state->STACK_IDX--]);
     #else
 	state->STACK_IDX--;
 	state->registers->eax = 1;
