@@ -17,25 +17,25 @@ int init_state() {
     memset(state->registers, 0, sizeof(s_registers));
     state->args = malloc(sizeof(s_arguments));
     if (state->args == NULL) {
-	free(state);
 	free(state->registers);
+	free(state);
 	return 1;
     }
     state->args->arg1 = malloc(sizeof(char) * MAX_ARG_SIZE);
     state->args->arg2 = malloc(sizeof(char) * MAX_ARG_SIZE);
     if (state->args->arg1 == NULL || state->args->arg2 == NULL) {
-	free(state);
 	free(state->registers);
+	free(state);
 	return 1;
     }
     memset(state->args->arg1, 0, sizeof(char) * MAX_ARG_SIZE);
     memset(state->args->arg2, 0, sizeof(char) * MAX_ARG_SIZE);
     state->labels_values = malloc(sizeof(int) * MAX_LABELS);
     if (state->labels_values == NULL) {
-	free(state);
 	free(state->registers);
 	free(state->args->arg1);
 	free(state->args->arg2);
+	free(state);
 	return 1;
     }
     memset(state->labels_values, 0, sizeof(int) * MAX_LABELS);

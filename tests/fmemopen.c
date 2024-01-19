@@ -1,6 +1,8 @@
+#include "fmemopen.h"
+
+typedef int make_iso_compilers_happy; //...
 #ifdef _WIN32
 #include <windows.h>
-#include "fmemopen.h"
 #include <share.h>
 #include <io.h>
 #include <fcntl.h>
