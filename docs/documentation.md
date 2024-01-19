@@ -88,6 +88,7 @@ The syntax is very close to x86 Intel Assembly. Here is a list of the operands a
 | **push** 69      | Pushes the value 69 to the top of the stack       | no |
 | **call** put     | Calls the `put` API                               | yes/no |
 
+All the `jmp`-related operands (`je`, `jna`, ...) can have a number as argument, this way the program will jump to `x` lines (ex: `jmp 3` will jump 3 lines down).<br>
 All the operands are case-sensitive, meaning that `ADD` will be an invalid operand.<br>
 Please note that additional operands will be added in the future.
 

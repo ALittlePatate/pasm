@@ -140,6 +140,11 @@ void jmp() {
 	    return;
 	}
     }
+	int line_off = atoi(state->args->arg1);
+	if (line_off) {
+	    state->curr_line += line_off;
+		return;
+	}
 
     state->last_jmp_code = 1;
     return;
