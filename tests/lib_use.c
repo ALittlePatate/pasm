@@ -1,3 +1,6 @@
+/* This example shows how you can connect to a server, */
+/* and send the output of the program through a socket.*/
+
 #include "../include/pasm.h"
 #include <stdio.h>
 #include <stdlib.h>
@@ -43,6 +46,8 @@ int main() {
 	buffer[bytesRead] = '\0'; // Null-terminate the received data
 	if (bytesRead > 0 && buffer[bytesRead - 1] == '\n')
 	    buffer[bytesRead - 1] = '\0'; //deletes \n
+	if (strcmp(buffer, "end") == 0)
+	    break;
 	printf("script path: %s\n", buffer);
 	pasm_run_script(buffer, 0, 0, clientSocket); //considering buffer is the path of a valid .pasm script
     }
