@@ -2,10 +2,12 @@
 #include <string.h>
 
 #include "file_utils.h"
+#include "debug.h"
 #include "interpreter_states.h"
 #include "instructions.h"
 
 int fstream =  0;
+int pasm_debug_mode = 0;
 void show_error(size_t line, char *line_) {
 #ifdef _WIN32
     int wrote = dprintf(fstream, "%llu| ", line + 1);
@@ -17,20 +19,6 @@ void show_error(size_t line, char *line_) {
     dprintf(fstream, "%*s\n", wrote + 1, "|");
     for (int i = 0; i < wrote; i++)
 	dprintf(fstream, " ");
-}
-
-void show_states() {
-    printf("\n\n--------PASM STATE--------\n");
-    printf("a1: %-3d | ", state->registers->a1);
-    printf("a2: %-3d | ", state->registers->a2);
-    printf("a3: %-3d\n", state->registers->a3);
-    printf("a4: %-3d | ", state->registers->a4);
-    printf("a5: %-3d | ", state->registers->a5);
-    printf("a6: %-3d\n", state->registers->a6);
-    printf("a7: %-3d | ", state->registers->a7);
-    printf("a8: %-3d | ", state->registers->a8);
-    printf("a9: %-3d\n", state->registers->a9);
-    printf("eax: %-3d\n", state->registers->eax);
 }
 
 int check_errors(char *line) {
@@ -81,9 +69,11 @@ int pasm_run_script(const char *filename, char **file, size_t lines, int _fstrea
 	free_script(file);
 	return 1;
     }
-
+    
     int found_main = 0;
     for (state->curr_line = 0; state->curr_line < (int)lines && get_exit_state() == 0 ; ++state->curr_line) {
+	if (pasm_debug_mode && found_main)
+	    debug_input(file[state->curr_line]);
 	char *line = strdup(file[state->curr_line]);
 	if (line[0] == ';' || line[0] == '\0') {
 	    free(line);
@@ -115,9 +105,6 @@ int pasm_run_script(const char *filename, char **file, size_t lines, int _fstrea
     }
 
     int ret_code = get_exit_state();
-#ifdef DEBUG
-    show_states();
-#endif
     free_script(file);
     return ret_code;
 }

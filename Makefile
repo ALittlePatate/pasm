@@ -2,7 +2,8 @@ SRC = 	src/pasm.c \
 	src/file_utils.c \
 	src/interpreter_states.c \
 	src/instructions.c \
-	src/api.c
+	src/api.c \
+	src/debug.c
 OBJ = $(SRC:.c=.o)
 NAME = pasm
 CC = gcc
@@ -23,10 +24,6 @@ $(NAME):
 
 interpreter: $(NAME)
 
-debug: fclean
-debug: CFLAGS += -DDEBUG -g3
-debug: $(NAME)
-
 clean:
 	@-rm -f $(OBJ)
 	@-cd tests && $(MAKE) clean
@@ -38,4 +35,4 @@ fclean: clean
 re: fclean
 re: $(NAME)
 
-.PHONY : all $(NAME) clean fclean re interpreter lib debug
+.PHONY : all $(NAME) clean fclean re interpreter lib

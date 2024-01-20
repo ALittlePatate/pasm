@@ -2,6 +2,10 @@
 #include <stdlib.h>
 #include <stdio.h>
 
+// set to 1 for debug mode
+// /!\ YOU NEED ACCESS TO STDIN
+extern int pasm_debug_mode;
+
 /* filename: path of the pasm script, will use file argument if NULL                    */
 /* file: char** containing the lines of a pasm script, will be used if filename is NULL */
 /* lines: number of lines in the file argument, will be used if filename is NULL        */
