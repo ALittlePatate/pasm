@@ -34,4 +34,5 @@ Then link the library to your program, see [this example](tests/lib_use.c).<br>
 
 # Code examples
 - [keylogger](examples/keylogger.pasm)
+- [polynomial calculator](examples/poly.pasm)
 - [functions test](examples/test.pasm)
