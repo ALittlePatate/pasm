@@ -1,6 +1,7 @@
 #include "instructions.h"
 #include "interpreter_states.h"
 #include "api.h"
+#include <math.h>
 #include <string.h>
 #include <stdlib.h>
 
@@ -25,7 +26,7 @@ bool check_args(s_arguments *args, int num_in_first, int num_args) {
 	return false;
     }
 
-    if ((!is_num(args->arg2) && !is_reg(args->arg2))) {
+    if ((!is_num(args->arg2) && !is_reg(args->arg2)) && num_args == 2) {
 	state->last_check_args_code = ARG2_WRONG;
 	return false;
     }
@@ -35,27 +36,27 @@ bool check_args(s_arguments *args, int num_in_first, int num_args) {
 int* get_reg(char* reg_char) {
     switch (reg_char[1]) {
 	case '1' :
-		return &state->registers->a1;
+	    return &state->registers->a1;
 	case '2' :
-		return &state->registers->a2;
+	    return &state->registers->a2;
 	case '3' :
-		return &state->registers->a3;
+	    return &state->registers->a3;
 	case '4' :
-		return &state->registers->a4;
+	    return &state->registers->a4;
 	case '5' :
-		return &state->registers->a5;
+	    return &state->registers->a5;
 	case '6' :
-		return &state->registers->a6;
+	    return &state->registers->a6;
 	case '7' :
-		return &state->registers->a7;
+	    return &state->registers->a7;
 	case '8' :
-		return &state->registers->a8;
+	    return &state->registers->a8;
 	case '9' :
-		return &state->registers->a9;
+	    return &state->registers->a9;
 	case 'a' : //eax
-		return &state->registers->eax;
+	    return &state->registers->eax;
 	default :
-		return NULL; //should never happen
+	    return NULL; //should never happen
     }
 }
 
@@ -140,11 +141,11 @@ void jmp() {
 	    return;
 	}
     }
-	int line_off = atoi(state->args->arg1);
-	if (line_off) {
-	    state->curr_line += line_off;
-		return;
-	}
+    int line_off = atoi(state->args->arg1);
+    if (line_off) {
+	state->curr_line += line_off;
+	    return;
+    }
 
     state->last_jmp_code = 1;
     return;
@@ -189,6 +190,23 @@ void add() {
     *get_reg(state->args->arg1) += get_value(state->args->arg2);
 }
 
+
+void _sqrt() {
+    if (!check_args(state->args, 0, 1)) {
+	return;
+    }
+
+    *get_reg(state->args->arg1) = sqrt(get_value(state->args->arg1));
+}
+
+void neg() {
+    if (!check_args(state->args, 0, 1)) {
+	return;
+    }
+
+    *get_reg(state->args->arg1) = -get_value(state->args->arg1);
+}
+
 void mul() {
     if (!check_args(state->args, 0, 2)) {
 	return;
@@ -230,7 +248,7 @@ void push() {
     }
     
     int value = get_value(state->args->arg1);
-    if (value == 0) {
+    if (value == 0 && !is_reg(state->args->arg1)) {
 	if (state->args->arg1[0] == '\\') {
 	    switch (state->args->arg1[1]) {
 		case 'n':

@@ -11,6 +11,7 @@ typedef struct command_s {
 bool is_reg(char* arg);
 bool check_args(s_arguments *args, int num_in_first, int num_args);
 int* get_reg(char* arg);
+int get_value(char* arg);
 
 void add();
 void sub();
@@ -29,6 +30,8 @@ void ret();
 void pop();
 void push();
 void call();
+void neg();
+void _sqrt();
 void _and();
 void _xor();
 void end();
@@ -51,6 +54,8 @@ static const command_t command_map[] = {
     {.command = "pop", .fptr = pop},
     {.command = "push", .fptr = push},
     {.command = "call", .fptr = call},
+    {.command = "sqrt", .fptr = _sqrt},
+    {.command = "neg", .fptr = neg},
     {.command = "and", .fptr = _and},
     {.command = "xor", .fptr = _xor},
     {.command = "end", .fptr = end},

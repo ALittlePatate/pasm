@@ -7,7 +7,7 @@ OBJ = $(SRC:.c=.o)
 NAME = pasm
 CC = gcc
 CFLAGS = -Wall -Wextra -Wpedantic -Iinclude -s -Os -fno-ident -fno-asynchronous-unwind-tables
-CLIBS =
+CLIBS = -lm
 
 all:	$(NAME)
 
