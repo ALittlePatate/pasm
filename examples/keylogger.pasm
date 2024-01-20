@@ -37,4 +37,8 @@ je loop
 push a1
 push 1
 call put
+
+push \n
+push 1
+call put
 jmp loop
