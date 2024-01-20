@@ -10,7 +10,7 @@ size_t line_count = 0;
 int read_script(const char *filename, char ***buf, size_t *lines) {
     FILE *script = fopen(filename, "r");
     if (script == NULL) {
-        fprintf(stderr, "Could not open %s.\n", filename);
+        dprintf(fstream, "Could not open %s.\n", filename);
         return 1;
     }
 
@@ -23,14 +23,14 @@ int read_script(const char *filename, char ***buf, size_t *lines) {
         char *line_copy = strdup(line);
         char **temp = realloc(*buf, (line_count + 1) * sizeof(char*));
         if (temp == NULL) {
-            fprintf(stderr, "Error allocating memory.\n");
+            dprintf(fstream, "Error allocating memory.\n");
             return 1;
         }
         *buf = temp;
         (*buf)[line_count++] = line_copy;
     }
     if (line_count == 0) {
-        fprintf(stderr, "%s is an empty file.\n", filename);
+        dprintf(fstream, "%s is an empty file.\n", filename);
         return 1;
     }
 

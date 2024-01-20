@@ -5,18 +5,18 @@
 #include "interpreter_states.h"
 #include "instructions.h"
 
-FILE *fstream = NULL;
+int fstream =  0;
 void show_error(size_t line, char *line_) {
 #ifdef _WIN32
-    int wrote = fprintf(fstream, "%llu| ", line + 1);
+    int wrote = dprintf(fstream, "%llu| ", line + 1);
 #else
-    int wrote = fprintf(fstream, "%ld| ", line + 1);
+    int wrote = dprintf(fstream, "%ld| ", line + 1);
 #endif
-    fprintf(fstream, "%s\n", line_);
-    fprintf(fstream, "%*s\n", wrote + 1, "^");
-    fprintf(fstream, "%*s\n", wrote + 1, "|");
+    dprintf(fstream, "%s\n", line_);
+    dprintf(fstream, "%*s\n", wrote + 1, "^");
+    dprintf(fstream, "%*s\n", wrote + 1, "|");
     for (int i = 0; i < wrote; i++)
-	fprintf(fstream, " ");
+	dprintf(fstream, " ");
 }
 
 void show_states() {
@@ -39,13 +39,13 @@ int check_errors(char *line) {
 
 	switch ((int)state->last_check_args_code) {
 	    case WRONG_NUMBER :
-		fprintf(fstream, "wrong number of arguments on line %d\n", state->curr_line + 1);
+		dprintf(fstream, "wrong number of arguments on line %d\n", state->curr_line + 1);
 		break;
 	    case ARG1_WRONG :
-		fprintf(fstream, "arg1 is invalid on line %d\n", state->curr_line + 1);
+		dprintf(fstream, "arg1 is invalid on line %d\n", state->curr_line + 1);
 		break;
 	    case ARG2_WRONG :
-		fprintf(fstream, "arg2 is invalid on line %d\n", state->curr_line + 1);
+		dprintf(fstream, "arg2 is invalid on line %d\n", state->curr_line + 1);
 		break;
 	}
 	return 1;
@@ -53,26 +53,26 @@ int check_errors(char *line) {
 
     if (state->last_jmp_code) {
 	show_error(state->curr_line, line);
-	fprintf(fstream, "%s is not a valid label/api\n", state->args->arg1);
+	dprintf(fstream, "%s is not a valid label/api\n", state->args->arg1);
 	return 1;
     }
 
     if (state->last_stack_code != STACK_OK) {
 	show_error(state->curr_line, line);
-	fprintf(fstream, "stack %s on line %d\n",
+	dprintf(fstream, "stack %s on line %d\n",
 		state->last_stack_code == OVERFLOW ? "overflow" : "underflow", state->curr_line + 1);
 	return 1;
     }
     return 0;
 }
 
-int pasm_run_script(const char *filename, char **file, size_t lines, FILE *_fstream) {
+int pasm_run_script(const char *filename, char **file, size_t lines, int _fstream) {
     fstream = _fstream;
 
     if (filename && read_script(filename, &file, &lines) == 1)
 	return 1;
     if (init_state() == 1) {
-	fprintf(fstream, "Failed to initialize the interpreter.\n");
+	dprintf(fstream, "Failed to initialize the interpreter.\n");
 	free_script(file);
 	return 1;
     }
@@ -88,7 +88,7 @@ int pasm_run_script(const char *filename, char **file, size_t lines, FILE *_fstr
 	if (com == NULL || com->fptr == NULL) {
 	    if (file[state->curr_line][strlen(line) - 1] != ':') {
 		show_error(state->curr_line, file[state->curr_line]);
-		fprintf(fstream, "%s \"%s\"\n", "unknown expression", strtok(file[state->curr_line], " "));
+		dprintf(fstream, "%s \"%s\"\n", "unknown expression", strtok(file[state->curr_line], " "));
 		set_exit_state(-1);
 		free(line);
 		break;

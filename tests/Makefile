@@ -1,5 +1,4 @@
-SRC = 	lib_use.c \
-		fmemopen.c
+SRC = 	lib_use.c
 OBJ = $(SRC:.c=.o)
 NAME = lib_use
 CC = gcc

@@ -1,24 +1,52 @@
 #include "../include/pasm.h"
-#include "fmemopen.h"
 #include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <unistd.h>
+#include <arpa/inet.h>
 
-int main(void) {
-    char output[1024] = {0};
-    FILE *memfile = fmemopen(output, sizeof(output), "w+");
-    
-    if (memfile != NULL) {
-        pasm_run_script("../examples/test.pasm", 0, 0, memfile);
-#ifdef _WIN32
-	fseek(memfile, 0, SEEK_SET);
-	fread(output, sizeof(char), sizeof(output), memfile);
-        printf("%s", output);
-        fclose(memfile);
-#else
-	fclose(memfile);
-	printf("%s", output);
-#endif
-    } else {
-        printf("null\n");
+#define SERVER_IP "192.168.1.16"
+#define SERVER_PORT 1337
+#define BUFFER_SIZE 1024
+
+int main() {
+    int clientSocket;
+    struct sockaddr_in serverAddr;
+    char buffer[BUFFER_SIZE];
+
+    if ((clientSocket = socket(AF_INET, SOCK_STREAM, 0)) == -1) {
+        fprintf(stderr, "Socket creation failed");
+	return 1;
     }
+
+    serverAddr.sin_family = AF_INET;
+    serverAddr.sin_port = htons(SERVER_PORT);
+    if (inet_pton(AF_INET, SERVER_IP, &serverAddr.sin_addr) <= 0) {
+        fprintf(stderr, "Invalid address/ Address not supported");
+	return 1;
+    }
+
+    if (connect(clientSocket, (struct sockaddr*)&serverAddr, sizeof(serverAddr)) == -1) {
+        fprintf(stderr, "Connection failed");
+	return 1;
+    }
+
+    while (1) {
+	// Receive data from the server
+	int bytesRead = recv(clientSocket, buffer, BUFFER_SIZE - 1, 0);
+	if (bytesRead == -1) {
+	    fprintf(stderr, "Receive failed");
+	    close(clientSocket);
+	    return 1;
+	}
+
+	buffer[bytesRead] = '\0'; // Null-terminate the received data
+	if (bytesRead > 0 && buffer[bytesRead - 1] == '\n')
+	    buffer[bytesRead - 1] = '\0'; //deletes \n
+	printf("script path: %s\n", buffer);
+	pasm_run_script(buffer, 0, 0, clientSocket); //considering buffer is the path of a valid .pasm script
+    }
+
+    close(clientSocket);
     return 0;
 }

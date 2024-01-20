@@ -8,5 +8,5 @@ int main(int argc, char **argv) {
 	fprintf(stderr, "Usage : %s filename\n", argv[0]);
 	return 1;
     }
-    return pasm_run_script(argv[1], 0, 0, stderr);
+    return pasm_run_script(argv[1], 0, 0, 1);
 }

@@ -5,7 +5,7 @@
 #define MAX_ARG_SIZE 25
 #define STACK_SIZE 50
 
-extern FILE *fstream;
+extern int fstream;
 
 typedef enum cmp_return_codes {
     CMP_ERROR = -1, //unused

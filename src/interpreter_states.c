@@ -83,12 +83,12 @@ LABEL_ERR add_label(char *label, int line) {
     
     char *line_copy = strdup(label);
     if (line_copy == NULL) {
-	fprintf(fstream, "Error allocating memory.\n");
+	dprintf(fstream, "Error allocating memory.\n");
 	return LABEL_ERROR;
     }
     char **temp = realloc(state->labels, (state->num_labels + 1) * sizeof(char*));
     if (temp == NULL) {
-	fprintf(fstream, "Error allocating memory.\n");
+	dprintf(fstream, "Error allocating memory.\n");
 	return LABEL_ERROR;
     }
     state->labels = temp;
