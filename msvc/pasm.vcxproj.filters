@@ -1,0 +1,46 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="pasm">
+      <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
+      <Extensions>cpp;c;cc;cxx;c++;cppm;ixx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="..\src\api.c">
+      <Filter>pasm</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\debug.c">
+      <Filter>pasm</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\file_utils.c">
+      <Filter>pasm</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\instructions.c">
+      <Filter>pasm</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\interpreter_states.c">
+      <Filter>pasm</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\pasm.c">
+      <Filter>pasm</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\src\api.h">
+      <Filter>pasm</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\debug.h">
+      <Filter>pasm</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\file_utils.h">
+      <Filter>pasm</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\instructions.h">
+      <Filter>pasm</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\interpreter_states.h">
+      <Filter>pasm</Filter>
+    </ClInclude>
+  </ItemGroup>
+</Project>

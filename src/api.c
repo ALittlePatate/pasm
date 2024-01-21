@@ -16,8 +16,13 @@ void api_put() {
     if (mode != 1 && mode != 2) return;
 
     int f = fstream;
+#ifdef _WIN32
+    if (f == _fileno(stderr))
+		f = _fileno(stdout);
+#else
     if (f == fileno(stderr))
-	f = fileno(stdout);
+		f = fileno(stdout);
+#endif
     
     if (mode == 1) {
 	char c = state->STACK[state->STACK_IDX--];

@@ -85,7 +85,11 @@ LABEL_ERR add_label(char *label, int line) {
 	if (strcmp(label, state->labels[i]) == 0)
 	    return LABEL_ALREADY_EXISTS;
     
+#ifdef _WIN32
+    char *line_copy = _strdup(label);
+#else
     char *line_copy = strdup(label);
+#endif
     if (line_copy == NULL) {
 	dprintf(fstream, "Error allocating memory.\n");
 	return LABEL_ERROR;
@@ -125,7 +129,11 @@ int parse_arguments(char *line) {
     strcpy(state->args->arg1, "");
     strcpy(state->args->arg2, "");
     
+#ifdef _WIN32
+    char *line_cpy = _strdup(line);
+#else
     char *line_cpy = strdup(line);
+#endif
     char *ptr = strstr(line_cpy, " ");
     char *arg = 0;
     if (!ptr) {

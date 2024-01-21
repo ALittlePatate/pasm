@@ -1,7 +1,10 @@
 .vs
 .git
 x64/
+Debug/
+Release/
 build/
+*.obj
 *.a
 *.o
 *.exe

@@ -90,7 +90,11 @@ int pasm_run_script(const char *filename, char **file, size_t lines, int _fstrea
     for (state->curr_line = 0; state->curr_line < (int)lines && get_exit_state() == 0 ; ++state->curr_line) {
 	if (pasm_debug_mode && found_main)
 	    debug_input(file[state->curr_line]);
+#ifdef _WIN32
+	char* line = _strdup(file[state->curr_line]);
+#else
 	char *line = strdup(file[state->curr_line]);
+#endif
 	if (line[0] == ';' || line[0] == '\0') {
 	    free(line);
 	    continue;

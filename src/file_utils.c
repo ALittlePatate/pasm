@@ -24,7 +24,11 @@ int read_script(const char *filename, char ***buf, size_t *lines) {
         if (line[length - 1] == '\n') {
             line[length - 1] = '\0';
         }
-        char *line_copy = strdup(line);
+#ifdef _WIN32
+		char *line_copy = _strdup(line);
+#else
+		char *line_copy = strdup(line);
+#endif
         char **temp = realloc(*buf, (line_count + 1) * sizeof(char*));
         if (temp == NULL) {
             dprintf(fstream, "Error allocating memory.\n");

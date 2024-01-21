@@ -196,7 +196,7 @@ void _sqrt() {
 	return;
     }
 
-    *get_reg(state->args->arg1) = sqrt(get_value(state->args->arg1));
+    *get_reg(state->args->arg1) = (int)sqrt(get_value(state->args->arg1));
 }
 
 void neg() {
