@@ -10,6 +10,11 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "interpreter", "interpreter.
 		{6365D58B-DF8C-46B2-A93D-78D988A34FE8} = {6365D58B-DF8C-46B2-A93D-78D988A34FE8}
 	EndProjectSection
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "socket_usage", "socket_usage.vcxproj", "{FA2D5307-7B56-4B44-B0B4-DDE0394A3A75}"
+	ProjectSection(ProjectDependencies) = postProject
+		{6365D58B-DF8C-46B2-A93D-78D988A34FE8} = {6365D58B-DF8C-46B2-A93D-78D988A34FE8}
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|x64 = Debug|x64
@@ -34,6 +39,14 @@ Global
 		{6045F9D7-3A5E-406A-9949-7ABBB3BCBECC}.Release|x64.Build.0 = Release|x64
 		{6045F9D7-3A5E-406A-9949-7ABBB3BCBECC}.Release|x86.ActiveCfg = Release|Win32
 		{6045F9D7-3A5E-406A-9949-7ABBB3BCBECC}.Release|x86.Build.0 = Release|Win32
+		{FA2D5307-7B56-4B44-B0B4-DDE0394A3A75}.Debug|x64.ActiveCfg = Debug|x64
+		{FA2D5307-7B56-4B44-B0B4-DDE0394A3A75}.Debug|x64.Build.0 = Debug|x64
+		{FA2D5307-7B56-4B44-B0B4-DDE0394A3A75}.Debug|x86.ActiveCfg = Debug|Win32
+		{FA2D5307-7B56-4B44-B0B4-DDE0394A3A75}.Debug|x86.Build.0 = Debug|Win32
+		{FA2D5307-7B56-4B44-B0B4-DDE0394A3A75}.Release|x64.ActiveCfg = Release|x64
+		{FA2D5307-7B56-4B44-B0B4-DDE0394A3A75}.Release|x64.Build.0 = Release|x64
+		{FA2D5307-7B56-4B44-B0B4-DDE0394A3A75}.Release|x86.ActiveCfg = Release|Win32
+		{FA2D5307-7B56-4B44-B0B4-DDE0394A3A75}.Release|x86.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

@@ -10,15 +10,25 @@ int fstream =  0;
 int pasm_debug_mode = 0;
 
 #ifdef _WIN32 // i swear i hate windows at this point
+#pragma comment(lib, "ws2_32.lib")
+
 #include <stdarg.h>
 #include <io.h>
+#include <winsock.h>
 
 int dprintf(int stream, const char * format, ...) {
   char buf[256] = {0}; //might overflow but whatever, fuck Windows
   va_list args;
   va_start(args, format);
   int wrote = vsprintf(buf, format, args);
-  _write(stream, buf, sizeof(buf));
+  struct sockaddr name = {0};
+  int len = 0;
+  if (getsockname(stream, &name, &len) == WSAENOTSOCK) {
+	  _write(stream, buf, sizeof(buf));
+  }
+  else {
+	  send(stream, buf, sizeof(buf), 0);
+  }
   va_end(args);
   return wrote;
 }
