@@ -7,6 +7,10 @@
 
 #include <stdio.h>
 
+#ifdef _WIN32
+extern int dprintf(int stream, const char *format, ...);
+#endif
+
 void api_put() {
     int mode = state->STACK[state->STACK_IDX--]; // 1 for char, 2 for num
     if (mode != 1 && mode != 2) return;

@@ -6,6 +6,10 @@
 
 #define MAX_LINE 1024
 
+#ifdef _WIN32
+extern int dprintf(int stream, const char *format, ...);
+#endif
+
 size_t line_count = 0;
 int read_script(const char *filename, char ***buf, size_t *lines) {
     FILE *script = fopen(filename, "r");

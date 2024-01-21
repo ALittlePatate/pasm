@@ -8,6 +8,22 @@
 
 int fstream =  0;
 int pasm_debug_mode = 0;
+
+#ifdef _WIN32 // i swear i hate windows at this point
+#include <stdarg.h>
+#include <io.h>
+
+int dprintf(int stream, const char * format, ...) {
+  char buf[256] = {0}; //might overflow but whatever, fuck Windows
+  va_list args;
+  va_start(args, format);
+  int wrote = vsprintf(buf, format, args);
+  _write(stream, buf, sizeof(buf));
+  va_end(args);
+  return wrote;
+}
+#endif
+
 void show_error(size_t line, char *line_) {
 #ifdef _WIN32
     int wrote = dprintf(fstream, "%llu| ", line + 1);

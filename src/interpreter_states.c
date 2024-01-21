@@ -3,6 +3,10 @@
 #include <stdio.h>
 #include <string.h>
 
+#ifdef _WIN32
+extern int dprintf(int stream, const char *format, ...);
+#endif
+
 s_state *state = NULL;
 int init_state() {
     state = malloc(sizeof(s_state));
