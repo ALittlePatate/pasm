@@ -49,7 +49,7 @@ long long* get_reg(char* reg_char) {
         ++reg_char;
     for (int i = 0; i < state->num_arrays; i++)
         if (strcmp(state->ARRAYS_NAME[i], reg_char) == 0)
-            return &state->ARRAYS_VALUES[i];
+            return (long long *)&state->ARRAYS_VALUES[i];
     switch (reg_char[1]) {
 	case '1' :
 	    return &state->registers->a1;
@@ -81,7 +81,7 @@ long long get_value(char* arg) {
 
     if (is_reg(arg)) {
         if (arg[0] == '&') {
-			ret = get_reg(arg);
+	    ret = (long long)get_reg(arg);
         }
         else if (arg[0] == '*') {
             ret = *(long long *)(*get_reg(arg));

@@ -11,12 +11,6 @@
 extern int dprintf(int stream, const char *format, ...);
 #endif
 
-void api_get_data() {
-    static const char dat[] = "Hello, World !";
-
-    state->registers->eax = (long long)dat;
-}
-
 void api_put() {
     int mode = (int)state->STACK[state->STACK_IDX--]; // 1 for char, 2 for num
     if (mode != 1 && mode != 2) return;
@@ -37,7 +31,7 @@ void api_put() {
 	dprintf(f, "%c", c); //using printf and not write because of the buffer
     }
     else {
-	dprintf(f, "%d", state->STACK[state->STACK_IDX--]);
+	dprintf(f, "%lld", state->STACK[state->STACK_IDX--]);
     }
 }
 
