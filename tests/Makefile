@@ -3,7 +3,7 @@ OBJ = $(SRC:.c=.o)
 NAME = lib_use
 CC = gcc
 CFLAGS = -Wall -Wextra -Wpedantic -Iinclude -s -Os -fno-ident -fno-asynchronous-unwind-tables
-CLIBS = ../build/libpasm.a
+CLIBS = ../build/libpasm.a -lm
 
 all:	$(NAME)
 
