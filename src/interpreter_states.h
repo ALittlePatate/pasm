@@ -48,6 +48,9 @@ typedef struct t_state {
     int RET_STACK_IDX;
     int STACK_IDX;
     long long STACK[STACK_SIZE];
+    char** ARRAYS_NAME;
+    int num_arrays;
+    long long **ARRAYS_VALUES;
     int last_jmp_code;
     stack_codes last_stack_code;
     cmp_return_codes last_cmp_code;
@@ -63,9 +66,16 @@ typedef enum E_LABEL_ERR {
     LABEL_ERROR
 } LABEL_ERR;
 
+typedef enum E_ARRAY_ERR {
+    ARRAY_OK,
+    ARRAY_ERROR,
+    ARRAY_NOT_AN_ARRAY 
+} ARRAY_ERR;
+
 int init_state();
 void free_state();
 void set_exit_state(int exit_state);
 int get_exit_state();
 LABEL_ERR add_label(char *label, int line);
+ARRAY_ERR add_array(char *line);
 int parse_arguments(char *args);

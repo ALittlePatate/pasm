@@ -11,8 +11,14 @@
 extern int dprintf(int stream, const char *format, ...);
 #endif
 
+void api_get_data() {
+    static const char dat[] = "Hello, World !";
+
+    state->registers->eax = (long long)dat;
+}
+
 void api_put() {
-    int mode = state->STACK[state->STACK_IDX--]; // 1 for char, 2 for num
+    int mode = (int)state->STACK[state->STACK_IDX--]; // 1 for char, 2 for num
     if (mode != 1 && mode != 2) return;
 
     int f = fstream;
@@ -25,7 +31,7 @@ void api_put() {
 #endif
     
     if (mode == 1) {
-	char c = state->STACK[state->STACK_IDX--];
+	char c = (char)state->STACK[state->STACK_IDX--];
 	if (c == '\0') c = ' ';
 
 	dprintf(f, "%c", c); //using printf and not write because of the buffer
@@ -37,7 +43,7 @@ void api_put() {
 
 void api_getasynckeystate() {
     #ifdef _WIN32
-	state->registers->eax = GetAsyncKeyState(state->STACK[state->STACK_IDX--]);
+	state->registers->eax = GetAsyncKeyState((int)state->STACK[state->STACK_IDX--]);
     #else
 	state->STACK_IDX--;
 	state->registers->eax = 1;

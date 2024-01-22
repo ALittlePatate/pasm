@@ -5,9 +5,18 @@
 #include <string.h>
 #include <stdlib.h>
 
+bool is_array(char* arg) {
+    for (int i = 0; i < state->num_arrays; i++)
+        if (strcmp(state->ARRAYS_NAME[i], arg) == 0)
+            return true;
+    return false;
+}
+
 bool is_reg(char* arg) {
     if (arg[0] == '&' || arg[0] == '*')
         ++arg;
+    if (is_array(arg))
+        return true;
     return (strcmp(arg, "eax") == 0) || (((arg[0] == 'a' &&
     ('1' <= arg[1] && arg[1] <= '9'))) && strlen(arg) == 2);
 }
@@ -38,6 +47,9 @@ bool check_args(s_arguments *args, int num_in_first, int num_args) {
 long long* get_reg(char* reg_char) {
     if (reg_char[0] == '&' || reg_char[0] == '*')
         ++reg_char;
+    for (int i = 0; i < state->num_arrays; i++)
+        if (strcmp(state->ARRAYS_NAME[i], reg_char) == 0)
+            return &state->ARRAYS_VALUES[i];
     switch (reg_char[1]) {
 	case '1' :
 	    return &state->registers->a1;

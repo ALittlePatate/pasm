@@ -28,10 +28,21 @@ void show_stack() {
 
 void show_labels() {
     printf("\n\n-----LABELS-----\n");
-    printf("format:\tlabel|line");
+    printf("format:\tlabel|line\n");
     for (int i = 0; i < state->num_labels; i++)
 	printf("%s|%d\n", state->labels[i], state->labels_values[i]);
     printf("\n\n-----LABELS-----\n");
+}
+
+void show_arrays() {
+    printf("\n\n-----ARRAYS-----\n");
+	for (int i = 0; i < state->num_arrays; i++) {
+		printf("%s: ", state->ARRAYS_NAME[i]);
+		for (int j = 0; j < 20; j++)
+			printf("%lld ", state->ARRAYS_VALUES[i][j]);
+		printf("...\n");
+	}
+    printf("\n\n-----ARRAYS-----\n");
 }
 
 void show_breakpoints(int *bp) {
@@ -48,6 +59,7 @@ void show_states() {
     show_registers();
     show_labels();
     show_stack();
+	show_arrays();
     printf("\n\n--------PASM STATE--------\n");
 }
 
