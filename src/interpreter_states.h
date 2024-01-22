@@ -33,7 +33,7 @@ typedef struct t_arguments {
 } s_arguments;
 
 typedef struct t_registers {
-    int a1, a2, a3, a4, a5, a6, a7, a8, a9, eax;
+    long long a1, a2, a3, a4, a5, a6, a7, a8, a9, eax;
 } s_registers;
 
 typedef struct t_state {
@@ -47,7 +47,7 @@ typedef struct t_state {
     int RET_STACK[STACK_SIZE];
     int RET_STACK_IDX;
     int STACK_IDX;
-    int STACK[STACK_SIZE];
+    long long STACK[STACK_SIZE];
     int last_jmp_code;
     stack_codes last_stack_code;
     cmp_return_codes last_cmp_code;

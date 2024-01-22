@@ -92,7 +92,8 @@ The syntax is very close to x86 Intel Assembly. Here is a list of the operands a
 
 All the `jmp`-related operands (`je`, `jna`, ...) can have a number as argument, this way the program will jump to `x` lines (ex: `jmp 3` will jump 3 lines down).<br>
 All the operands are case-sensitive, meaning that `ADD` will be an invalid operand.<br>
-Please note that additional operands will be added in the future.
+Please note that additional operands will be added in the future.<br>
+You can use the `&` and the `*` keywords just like in C to get the address and/or dereference and address. Example : `mov a1, &eax`
 
 ### Calling APIs
 APIs can be added in the [api.c](https://github.com/ALittlePatate/pasm/blob/main/src/api.c) and [api.h](https://github.com/ALittlePatate/pasm/blob/main/src/api.h) files.

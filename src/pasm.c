@@ -23,7 +23,7 @@ int dprintf(int stream, const char * format, ...) {
   int wrote = vsprintf(buf, format, args);
   struct sockaddr name = {0};
   int len = 0;
-  if (getsockname(stream, &name, &len) == WSAENOTSOCK) {
+  if (getsockname(stream, &name, &len) != 0) {
 	  _write(stream, buf, sizeof(buf));
   }
   else {
@@ -89,7 +89,7 @@ int pasm_run_script(const char *filename, char **file, size_t lines, int _fstrea
     fstream = _fstream;
 
     if (filename && read_script(filename, &file, &lines) == 1)
-	return 1;
+		return 1;
     if (init_state() == 1) {
 	dprintf(fstream, "Failed to initialize the interpreter.\n");
 	free_script(file);

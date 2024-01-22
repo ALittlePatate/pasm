@@ -6,23 +6,23 @@
 
 void show_registers() {
     printf("--Registers--\n");
-    printf("a1: %-3d | ", state->registers->a1);
-    printf("a2: %-3d | ", state->registers->a2);
-    printf("a3: %-3d\n", state->registers->a3);
-    printf("a4: %-3d | ", state->registers->a4);
-    printf("a5: %-3d | ", state->registers->a5);
-    printf("a6: %-3d\n", state->registers->a6);
-    printf("a7: %-3d | ", state->registers->a7);
-    printf("a8: %-3d | ", state->registers->a8);
-    printf("a9: %-3d\n", state->registers->a9);
-    printf("eax: %-3d\n\n", state->registers->eax);
+    printf("a1: %-3lld | ", state->registers->a1);
+    printf("a2: %-3lld | ", state->registers->a2);
+    printf("a3: %-3lld\n", state->registers->a3);
+    printf("a4: %-3lld | ", state->registers->a4);
+    printf("a5: %-3lld | ", state->registers->a5);
+    printf("a6: %-3lld\n", state->registers->a6);
+    printf("a7: %-3lld | ", state->registers->a7);
+    printf("a8: %-3lld | ", state->registers->a8);
+    printf("a9: %-3lld\n", state->registers->a9);
+    printf("eax: %-3lld\n\n", state->registers->eax);
 }
 
 void show_stack() {
     printf("--STACK--\n");
     printf("Elements: %d\n\n", state->STACK_IDX);
     for (int i = 0; i < state->STACK_IDX; i++)
-	printf("[%d]: %d\n", i, state->STACK[state->STACK_IDX]);
+	printf("[%d]: %lld\n", i, state->STACK[state->STACK_IDX]);
     printf("\n");
 }
 

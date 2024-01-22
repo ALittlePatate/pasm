@@ -10,8 +10,8 @@ typedef struct command_s {
 
 bool is_reg(char* arg);
 bool check_args(s_arguments *args, int num_in_first, int num_args);
-int* get_reg(char* arg);
-int get_value(char* arg);
+long long* get_reg(char* arg);
+long long* get_reg(char* reg_char);
 
 void add();
 void sub();

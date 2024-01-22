@@ -6,8 +6,10 @@
 #include <stdlib.h>
 
 bool is_reg(char* arg) {
+    if (arg[0] == '&' || arg[0] == '*')
+        ++arg;
     return (strcmp(arg, "eax") == 0) || (((arg[0] == 'a' &&
-    ('0' <= arg[1] && arg[1] <= '9'))) && strlen(arg) == 2);
+    ('1' <= arg[1] && arg[1] <= '9'))) && strlen(arg) == 2);
 }
 
 bool is_num(char* arg) {
@@ -33,7 +35,9 @@ bool check_args(s_arguments *args, int num_in_first, int num_args) {
     return true;
 }
 
-int* get_reg(char* reg_char) {
+long long* get_reg(char* reg_char) {
+    if (reg_char[0] == '&' || reg_char[0] == '*')
+        ++reg_char;
     switch (reg_char[1]) {
 	case '1' :
 	    return &state->registers->a1;
@@ -60,11 +64,19 @@ int* get_reg(char* reg_char) {
     }
 }
 
-int get_value(char* arg) {
-    int ret = 0;
+long long get_value(char* arg) {
+    long long ret = 0;
 
     if (is_reg(arg)) {
-	ret = *get_reg(arg);
+        if (arg[0] == '&') {
+			ret = get_reg(arg);
+        }
+        else if (arg[0] == '*') {
+            ret = *(long long *)(*get_reg(arg));
+        }
+        else {
+            ret = *get_reg(arg);
+        }
     }
     else {
 	ret = atoi(arg);
@@ -90,8 +102,8 @@ void cmp() {
 	return;
     }
 
-    int a1_ = get_value(state->args->arg1);
-    int a2_ = get_value(state->args->arg2);
+    long long a1_ = get_value(state->args->arg1);
+    long long a2_ = get_value(state->args->arg2);
 
     if (a1_ == a2_) state->last_cmp_code = CMP_EQUAL;
     else if (a1_ > a2_) state->last_cmp_code = CMP_ABOVE;
@@ -196,7 +208,7 @@ void _sqrt() {
 	return;
     }
 
-    *get_reg(state->args->arg1) = (int)sqrt(get_value(state->args->arg1));
+    *get_reg(state->args->arg1) = (long long)sqrt(get_value(state->args->arg1));
 }
 
 void neg() {
@@ -247,7 +259,7 @@ void push() {
 	return;
     }
     
-    int value = get_value(state->args->arg1);
+    long long value = get_value(state->args->arg1);
     if (value == 0 && !is_reg(state->args->arg1)) {
 	if (state->args->arg1[0] == '\\') {
 	    switch (state->args->arg1[1]) {

@@ -44,7 +44,7 @@ int init_state() {
     }
     memset(state->labels_values, 0, sizeof(int) * MAX_LABELS);
     memset(state->RET_STACK, -1, sizeof(int) * STACK_SIZE);
-    memset(state->STACK, 0, sizeof(int) * STACK_SIZE);
+    memset(state->STACK, 0, sizeof(long long) * STACK_SIZE);
     state->RET_STACK_IDX = -1;
     state->STACK_IDX = -1;
     state->last_stack_code = STACK_OK;
