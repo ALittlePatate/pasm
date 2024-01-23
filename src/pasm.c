@@ -112,8 +112,10 @@ int pasm_run_script(const char *filename, char **file, size_t lines, int _fstrea
 	const command_t *com = find_command(command_map, strtok(line, " "));
 	if (com == NULL || com->fptr == NULL) {
 		ARRAY_ERR err = add_array(file[state->curr_line]);
-		if (err == ARRAY_OK)
-			continue;
+		if (err == ARRAY_OK) {
+		    free(line);
+		    continue;
+		}
 		if (err == ARRAY_ERROR) {
 			show_error(state->curr_line, file[state->curr_line]);
 			dprintf(fstream, "%s\n", "bad syntax in array definition");
