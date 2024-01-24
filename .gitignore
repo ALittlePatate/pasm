@@ -8,5 +8,6 @@ build/
 *.a
 *.o
 *.exe
+vgcore.*
 pasm
 lib_use
