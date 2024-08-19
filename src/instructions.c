@@ -90,7 +90,10 @@ long long get_value(char* arg) {
         }
     }
     else {
-	ret = atoi(arg);
+        if (strlen(arg) > 2 && arg[0] == '0' && arg[1] == 'x') {
+            ret = strtol(arg, NULL, 16);
+        }
+		ret = atoi(arg);
     }
     return ret;
 }
