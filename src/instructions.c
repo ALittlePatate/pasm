@@ -45,6 +45,8 @@ bool check_args(s_arguments *args, int num_in_first, int num_args) {
 }
 
 long long* get_reg(char* reg_char) {
+    int deref = reg_char[0] == '*';
+
     if (reg_char[0] == '&' || reg_char[0] == '*')
         ++reg_char;
     for (int i = 0; i < state->num_arrays; i++)
@@ -52,25 +54,25 @@ long long* get_reg(char* reg_char) {
             return (long long *)&state->ARRAYS_VALUES[i];
     switch (reg_char[1]) {
 	case '1' :
-	    return &state->registers->a1;
+	    return deref ? (long long*)state->registers->a1 : &state->registers->a1;
 	case '2' :
-	    return &state->registers->a2;
+	    return deref ? (long long*)state->registers->a2 : &state->registers->a2;
 	case '3' :
-	    return &state->registers->a3;
+	    return deref ? (long long*)state->registers->a3 : &state->registers->a3;
 	case '4' :
-	    return &state->registers->a4;
+	    return deref ? (long long*)state->registers->a4 : &state->registers->a4;
 	case '5' :
-	    return &state->registers->a5;
+	    return deref ? (long long*)state->registers->a5 : &state->registers->a5;
 	case '6' :
-	    return &state->registers->a6;
+	    return deref ? (long long*)state->registers->a6 : &state->registers->a6;
 	case '7' :
-	    return &state->registers->a7;
+	    return deref ? (long long*)state->registers->a7 : &state->registers->a7;
 	case '8' :
-	    return &state->registers->a8;
+	    return deref ? (long long*)state->registers->a8 : &state->registers->a8;
 	case '9' :
-	    return &state->registers->a9;
+	    return deref ? (long long*)state->registers->a9 : &state->registers->a9;
 	case 'a' : //eax
-	    return &state->registers->eax;
+	    return deref ? (long long*)state->registers->eax : &state->registers->eax;
 	default :
 	    return NULL; //should never happen
     }
@@ -83,11 +85,8 @@ long long get_value(char* arg) {
         if (arg[0] == '&') {
 	    ret = (long long)get_reg(arg);
         }
-        else if (arg[0] == '*') {
-            ret = *(long long *)(*get_reg(arg));
-        }
-        else {
-            ret = *get_reg(arg);
+		else {
+		ret = *get_reg(arg);
         }
     }
     else {
@@ -289,7 +288,8 @@ void push() {
 	    }
 	}
 	else {
-	    value = (int)state->args->arg1[0];
+        if (state->args->arg1[0] != '0')
+			value = (int)state->args->arg1[0];
 	}
     }
 
@@ -327,5 +327,5 @@ void _xor() {
 }
 
 void end() {
-    state->should_exit = 1;
+    state->should_exit = 0; //could use EAX for return code but i don't think i care
 }

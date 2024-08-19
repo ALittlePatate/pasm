@@ -4,7 +4,7 @@
 
 #include "interpreter_states.h"
 
-#define MAX_LINE 1024
+#define MAX_LINE 2048 
 
 #ifdef _WIN32
 extern int dprintf(int stream, const char *format, ...);

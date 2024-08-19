@@ -163,7 +163,7 @@ void debug_input(char *line) {
 		printf("%s is not a valid label or line number in this context", &in[2]);
 	    break;
 	case 'e':
-	    state->should_exit = 1;
+	    state->should_exit = 0;
 	    return;
 	case 'h':
 	default:

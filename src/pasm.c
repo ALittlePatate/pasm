@@ -36,7 +36,7 @@ int dprintf(int stream, const char * format, ...) {
 
 void show_error(size_t line, char *line_) {
 #ifdef _WIN32
-    int wrote = dprintf(fstream, "%llu| ", line + 1);
+    int wrote = dprintf(fstream, "%ld| ", line + 1);
 #else
     int wrote = dprintf(fstream, "%ld| ", line + 1);
 #endif
@@ -86,7 +86,7 @@ int check_errors(char *line) {
 /* _fstream: file descriptor for the output (can be a socket), default: stderr          */
 /* return value: nonzero if an error occurred                                           */
 int pasm_run_script(const char *filename, char **file, size_t lines, int _fstream) {
-    fstream = _fstream;
+	fstream = _fstream;
 
     if (filename && read_script(filename, &file, &lines) == 1)
 		return 1;
@@ -97,7 +97,7 @@ int pasm_run_script(const char *filename, char **file, size_t lines, int _fstrea
     }
     
     int found_main = 0;
-    for (state->curr_line = 0; state->curr_line < (int)lines && get_exit_state() == 0 ; ++state->curr_line) {
+    for (state->curr_line = 0; state->curr_line < (int)lines && get_exit_state() == -1 ; ++state->curr_line) {
 	if (pasm_debug_mode && found_main)
 	    debug_input(file[state->curr_line]);
 #ifdef _WIN32
@@ -137,6 +137,7 @@ int pasm_run_script(const char *filename, char **file, size_t lines, int _fstrea
 	    continue;
 	}
 	parse_arguments(file[state->curr_line]);
+	sanitize_arguments();
 	if (found_main)
 	    com->fptr();
 	if (check_errors(file[state->curr_line])) {

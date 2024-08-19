@@ -43,3 +43,34 @@ void api_getasynckeystate() {
 	state->registers->eax = 1;
     #endif
 }
+
+void api_virtualalloc() {
+#ifdef _WIN32
+    long long address = state->STACK[state->STACK_IDX--];
+    long long size = state->STACK[state->STACK_IDX--];
+    long long alloctype = state->STACK[state->STACK_IDX--];
+    long long flprotect = state->STACK[state->STACK_IDX--];
+    state->registers->eax = (long long)VirtualAlloc((LPVOID)address, (SIZE_T)size, (DWORD)alloctype, (DWORD)flprotect);
+#else
+    state->STACK_IDX -= 4;
+    state->registers->eax = 1;
+#endif
+}
+
+void api_virtualfree() {
+#ifdef _WIN32
+    long long address = state->STACK[state->STACK_IDX--];
+    long long size = state->STACK[state->STACK_IDX--];
+    long long freetype = state->STACK[state->STACK_IDX--];
+    state->registers->eax = VirtualFree((LPVOID)address, (SIZE_T)size, (DWORD)freetype);
+#else
+    state->STACK_IDX -= 3;
+    state->registers->eax = 1;
+#endif
+}
+
+void api_callrawaddr() {
+    long long address = state->STACK[state->STACK_IDX--];
+
+    ((void (*)())address)();
+}

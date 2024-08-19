@@ -50,6 +50,7 @@ int init_state() {
     state->STACK_IDX = -1;
     state->last_stack_code = STACK_OK;
     state->last_check_args_code = OK;
+    state->should_exit = -1;
     return 0;
 }
 
@@ -215,7 +216,12 @@ ARRAY_ERR add_array(char* line) {
     while (ptr != NULL && j < array_size) {
         if (ptr[0] == ' ')
             ++ptr;
-        arr[j++] = atoi(ptr);
+        if (strlen(ptr) > 2 && ptr[0] == '0' && ptr[1] == 'x') {
+			arr[j++] = strtol(ptr, NULL, 16);
+        }
+        else {
+			arr[j++] = atoi(ptr);
+        }
         ptr = strtok(NULL, ",");
     }
 	state->ARRAYS_VALUES[state->num_arrays++] = arr;
@@ -241,6 +247,19 @@ char *extract_arg(char *ptr, int a) {
     if (ptr2)
 	ptr2[0] = '\0';
     return arg;
+}
+
+void sanitize_arguments() { //removes trailing spaces
+    if (state->args->arg1 == NULL)
+        return;
+    for (int i = 0; state->args->arg1[i] != '\0'; i++)
+        if (state->args->arg1[i] == ' ' || state->args->arg1[i] == '\t' || state->args->arg1[i] == '\n')
+            state->args->arg1[i] = '\0';
+    if (state->args->arg2 == NULL)
+        return;
+    for (int i = 0; state->args->arg2[i] != '\0'; i++)
+        if (state->args->arg2[i] == ' ' || state->args->arg2[i] == '\t' || state->args->arg2[i] == '\n')
+            state->args->arg2[i] = '\0';
 }
 
 int parse_arguments(char *line) {
