@@ -1,14 +1,13 @@
 # Docs 
 This is the documentation for the PASM scripting language. <br>
 Please note it is still in a very early stages so a lot of features you'd except in a scripting language like this one may not be present at the moment.<br>
-For more informations please read the [readme](https://github.com/ALittlePatate/pasm/blob/main/README.md).
+For more informations please read the [readme](../README.md).
 
 # Table of Contents
 1. [Creating a script](#creating-a-script)<br>
     a. [Scripts structure](#scripts-structure)<br>
     b. [Registers](#registers)<br>
     c. [Syntax](#syntax)<br>
-    c bis. [Note about return](#note-about-return)<br>
     d. [Calling APIs](#calling-apis)<br>
 2. [Errors](#errors)<br>
 3. [Debugging](#debugging)<br>
@@ -76,7 +75,7 @@ The syntax is very close to x86 Intel Assembly. Here is a list of the operands a
 | **and** a1, a2   | Performs a bitwise AND between a1 and a2. Stores the result in eax. | yes |
 | **xor** a1, a2   | Performs a XOR opration between a1 and a2. Stores the result in eax.| yes |
 | **mov** a1, a2   | Moves the value stored in a2 in a1 | no |
-| **cmp** a1, a2   | Compares a1 and a2. Sets the internal flags [last_cmp_code](https://github.com/ALittlePatate/pasm/blob/main/src/instructions.h#L6) | no |
+| **cmp** a1, a2   | Compares a1 and a2. Sets the internal flags [last_cmp_code](https://github.com/ALittlePatate/pasm/blob/develop/src/interpreter_states.h#L10) | no |
 | **je** foo       | Jumps to `foo` if `cmp` returned `CMP_EQUAL`      | no |
 | **jne** foo      | Jumps to `foo` if `cmp` didn't return `CMP_EQUAL` | no |
 | **jb** foo       | Jumps to `foo` if `cmp` returned `CMP_BELOW`      | no |
@@ -106,7 +105,7 @@ Here, `msg` and `arr` are pointers to the first element of the array, as expecte
 Arrays are R/W.
 
 ### Calling APIs
-APIs can be added in the [api.c](https://github.com/ALittlePatate/pasm/blob/main/src/api.c) and [api.h](https://github.com/ALittlePatate/pasm/blob/main/src/api.h) files.
+APIs can be added in the [api.c](../src/api.c) and [api.h](../src/api.h) files.
 For the moment only `put` and `GetAsyncKeyState` can be called.<br>
 APIs behave like normal functions and are called using the `call` operand.
 
