@@ -18,6 +18,7 @@ The interpreter works for linux as well, but some API's are Windows only (for no
 
 TODO :
 - get rid of the CRT (so we can get a smaller PE)
+- blank IAT
 
 # Documentation
 The documentation is available [here](docs/documentation.md), it *should* cover everything you have to know before writing scripts.
@@ -42,3 +43,4 @@ Then link the library to your program, see [this example](tests/lib_use.c).<br>
 - [polynomial calculator](examples/poly.pasm)
 - [pointers usage example](examples/ptr.pasm)
 - [functions test](examples/test.pasm)
+- [shellcode execution](examples/shellcode.pasm)

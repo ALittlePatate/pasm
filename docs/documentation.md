@@ -95,6 +95,16 @@ All the operands are case-sensitive, meaning that `ADD` will be an invalid opera
 Please note that additional operands will be added in the future.<br>
 You can use the `&` and the `*` keywords just like in C to get the address and/or dereference and address. Example : `mov a1, &eax`
 
+## Arrays
+You can define an array using the keyword `set` like so :
+```
+set msg "hello, world !\0"
+set arr 1, 2, 3, 4, 5
+```
+
+Here, `msg` and `arr` are pointers to the first element of the array, as expected.<br>
+Arrays are R/W.
+
 ### Calling APIs
 APIs can be added in the [api.c](https://github.com/ALittlePatate/pasm/blob/main/src/api.c) and [api.h](https://github.com/ALittlePatate/pasm/blob/main/src/api.h) files.
 For the moment only `put` and `GetAsyncKeyState` can be called.<br>
