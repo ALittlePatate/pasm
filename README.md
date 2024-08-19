@@ -1,6 +1,6 @@
 # pasm
 PASM is a Scripting language that i made for fun with a few constraints :
-- the interpreter should be as small as possible and written without the CRT (currently ~22ko WITH CRT)
+- the interpreter should be as small as possible (currently ~139ko statically linked)
 - the language should be able to call Windows API's
 - the language should be able to execute scripts from a buffer without needing a file
 - the language should be able to send the output of a script using sockets or stdout
@@ -17,7 +17,6 @@ PASM supports pointers and arrays.
 The interpreter works for linux as well, but some API's are Windows only (for now).
 
 TODO :
-- get rid of the CRT (so we can get a smaller PE)
 - blank IAT
 
 # Documentation
