@@ -25,6 +25,9 @@
     <ClCompile Include="..\src\pasm.c">
       <Filter>pasm</Filter>
     </ClCompile>
+    <ClCompile Include="..\src\libc.c">
+      <Filter>pasm</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\src\api.h">
@@ -40,6 +43,9 @@
       <Filter>pasm</Filter>
     </ClInclude>
     <ClInclude Include="..\src\interpreter_states.h">
+      <Filter>pasm</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\libc.h">
       <Filter>pasm</Filter>
     </ClInclude>
   </ItemGroup>

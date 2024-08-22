@@ -21,7 +21,6 @@ jmp loop2
 
 main:
 mov a1, msg ; msg is a char *
-
 loop:
 cmp *a1, 0
 jne 1

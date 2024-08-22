@@ -2,9 +2,11 @@
 #include "interpreter_states.h"
 #include <stdio.h>
 #include <string.h>
+#include "libc.h"
 #include "debug.h"
 
 void show_registers() {
+#ifndef LAIKA
     printf("--Registers--\n");
     printf("a1: %-3lld | ", state->registers->a1);
     printf("a2: %-3lld | ", state->registers->a2);
@@ -16,25 +18,31 @@ void show_registers() {
     printf("a8: %-3lld | ", state->registers->a8);
     printf("a9: %-3lld\n", state->registers->a9);
     printf("eax: %-3lld\n\n", state->registers->eax);
+#endif
 }
 
 void show_stack() {
+#ifndef LAIKA
     printf("--STACK--\n");
     printf("Elements: %d\n\n", state->STACK_IDX);
     for (int i = 0; i < state->STACK_IDX; i++)
 	printf("[%d]: %lld\n", i, state->STACK[state->STACK_IDX]);
     printf("\n");
+#endif
 }
 
 void show_labels() {
+#ifndef LAIKA
     printf("\n\n-----LABELS-----\n");
     printf("format:\tlabel|line\n");
     for (int i = 0; i < state->num_labels; i++)
 	printf("%s|%d\n", state->labels[i], state->labels_values[i]);
     printf("\n\n-----LABELS-----\n");
+#endif
 }
 
 void show_arrays() {
+#ifndef LAIKA
     printf("\n\n-----ARRAYS-----\n");
 	for (int i = 0; i < state->num_arrays; i++) {
 		printf("%s: ", state->ARRAYS_NAME[i]);
@@ -43,42 +51,52 @@ void show_arrays() {
 		printf("...\n");
 	}
     printf("\n\n-----ARRAYS-----\n");
+#endif
 }
 
 void show_breakpoints(int *bp) {
+#ifndef LAIKA
     printf("---Breakpoints---\n");
     for (int i = 0; bp[i] != 0 && i < 255; i++) {
 	if (bp[i] + 1 == -1) continue; //deleted bp
 	printf("bp line %d\n", bp[i] + 1);
     }
     printf("---Breakpoints---\n");
+#endif
 }
 
 void show_states() {
+#ifndef LAIKA
     printf("\n\n--------PASM STATE--------\n");
     show_registers();
     show_labels();
     show_stack();
 	show_arrays();
     printf("\n\n--------PASM STATE--------\n");
+#endif
 }
 
 void bp_add(int *bp, int line) {
+#ifndef LAIKA
     int i = 0;
     for (i = 0; bp[i] != 0 && bp[i] != -1 && i < 255; i++);
     bp[i] = line;
+#endif
 }
 
 void bp_rem(int *bp, int line) {
+#ifndef LAIKA
     int i = 0;
     for (i = 0; bp[i] != 0 && i < 255; i++) {
 	if (bp[i] == line)
 	    bp[i] = -2;
     }
     return;
+#endif
 }
 
 int add_breakpoint(char *in, int *bp) {
+#ifndef LAIKA
     for (int i = 0; i < state->num_labels; i++) {
 	if (strncmp(state->labels[i], in, strlen(in) - 1) == 0) {
 	    bp_add(bp, state->labels_values[i] + 1);
@@ -92,9 +110,11 @@ int add_breakpoint(char *in, int *bp) {
     bp_add(bp, line - 1);
     printf("breakpoint added at line %d.\n", line);
     return 0;
+#endif
 }
 
 int rem_breakpoint(char *in, int *bp) {
+#ifndef LAIKA
     for (int i = 0; i < state->num_labels; i++) {
 	if (strncmp(state->labels[i], in, strlen(in) - 1) == 0) {
 	    bp_rem(bp, state->labels_values[i] + 1);
@@ -108,9 +128,11 @@ int rem_breakpoint(char *in, int *bp) {
     bp_rem(bp, line - 1);
     printf("breakpoint at line %d deleted.\n", line);
     return 0;
+#endif
 }
 
 void debug_input(char *line) {
+#ifndef LAIKA
     static int should_continue = 0;
     static int breakpoints[256] = {0};
 
@@ -179,4 +201,5 @@ void debug_input(char *line) {
 	    printf("d [line/label]: deletes a breakpoint on line line/label]\n");
 	}
     }
+#endif
 }

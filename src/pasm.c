@@ -3,6 +3,7 @@
 
 #include "file_utils.h"
 #include "debug.h"
+#include "libc.h"
 #include "interpreter_states.h"
 #include "instructions.h"
 
@@ -10,27 +11,61 @@ int fstream =  0;
 int pasm_debug_mode = 0;
 
 #ifdef _WIN32 // i swear i hate windows at this point
-#pragma comment(lib, "ws2_32.lib")
-
 #include <stdarg.h>
 #include <io.h>
-#include <winsock.h>
+
+typedef HANDLE(WINAPI* fGetStdHandle)(DWORD);
+typedef int(WINAPI* fwvsprintfA)(LPSTR, LPCSTR, va_list);
+typedef BOOL(WINAPI* fWriteFile)(HANDLE, LPCVOID, DWORD, LPDWORD, LPOVERLAPPED);
+
+fGetStdHandle pGetStdHandle = NULL;
+fwvsprintfA pwvsprintfA = NULL;
+fWriteFile pWriteFile = NULL;
 
 int dprintf(int stream, const char * format, ...) {
-  char buf[256] = {0}; //might overflow but whatever, fuck Windows
+  char buffer[1024]; //might overflow but whatever, fuck Windows
   va_list args;
+  DWORD written;
+  int length;
   va_start(args, format);
-  int wrote = vsprintf(buf, format, args);
-  struct sockaddr name = {0};
-  int len = 0;
-  if (getsockname(stream, &name, &len) != 0) {
-	  _write(stream, buf, sizeof(buf));
+  HANDLE h;
+
+  if (pGetStdHandle == NULL)
+	  pGetStdHandle = (fGetStdHandle)GetApi(L"KERNEL32.DLL", "GetStdHandle");
+  if (pwvsprintfA == NULL)
+	  pwvsprintfA = (fwvsprintfA)GetApi(L"USER32.dll", "wvsprintfA");
+  if (pWriteFile == NULL)
+	  pWriteFile = (fWriteFile)GetApi(L"KERNEL32.DLL", "WriteFile");
+
+  switch (stream) {
+  case 1: // stdout
+	  h = pGetStdHandle(STD_OUTPUT_HANDLE);
+	  break;
+  case 2: // stderr
+	  h = pGetStdHandle(STD_ERROR_HANDLE);
+	  break;
+  default: // Assume stream is a socket
+	  h = (HANDLE)stream;
+	  break;
+  }
+
+  length = pwvsprintfA(buffer, format, args);
+  va_end(args);
+
+  if (stream == 1 || stream == 2) {
+	  if (!pWriteFile(h, buffer, length, &written, NULL)) {
+		  return -1;
+	  }
   }
   else {
-	  send(stream, buf, sizeof(buf), 0);
+	  OVERLAPPED ov = {0};
+	  if (!pWriteFile(h, buffer, length, &written, &ov)) {
+		  state->should_exit = 1; //broken socket -> host disconnected
+		  return -1;
+	  }
   }
-  va_end(args);
-  return wrote;
+
+  return length;
 }
 #endif
 
@@ -41,10 +76,21 @@ void show_error(size_t line, char *line_) {
     int wrote = dprintf(fstream, "%ld| ", line + 1);
 #endif
     dprintf(fstream, "%s\n", line_);
+#ifdef _WIN32
+	// I hate you Windows
+
+	for (int j = 0; j < wrote; j++)
+		dprintf(fstream, " ");
+	dprintf(fstream, "^\n");
+	for (int k = 0; k < wrote; k++)
+		dprintf(fstream, " ");
+	dprintf(fstream, "|\n");
+#else
     dprintf(fstream, "%*s\n", wrote + 1, "^");
     dprintf(fstream, "%*s\n", wrote + 1, "|");
+#endif
     for (int i = 0; i < wrote; i++)
-	dprintf(fstream, " ");
+		dprintf(fstream, " ");
 }
 
 int check_errors(char *line) {
@@ -92,7 +138,7 @@ int pasm_run_script(const char *filename, char **file, size_t lines, int _fstrea
 		return 1;
     if (init_state() == 1) {
 	dprintf(fstream, "Failed to initialize the interpreter.\n");
-	free_script(file);
+	free__script(file);
 	return 1;
     }
     
@@ -101,39 +147,44 @@ int pasm_run_script(const char *filename, char **file, size_t lines, int _fstrea
 	if (pasm_debug_mode && found_main)
 	    debug_input(file[state->curr_line]);
 #ifdef _WIN32
-	char* line = _strdup(file[state->curr_line]);
+	char* line = strdup_(file[state->curr_line]);
 #else
 	char *line = strdup(file[state->curr_line]);
 #endif
-	if (line[0] == ';' || line[0] == '\0' || line[0] == '\t') {
-	    free(line);
+	if (line[0] == ';' || line[0] == '\0' || line[0] == '\t' || line[0] == '\r' || line[0] == '\n') {
+	    free_(line);
 	    continue;
 	}
-	const command_t *com = find_command(command_map, strtok(line, " "));
+	while (file[state->curr_line][strlen(line) - 1] == '\r' || file[state->curr_line][strlen(line) - 1] == '\n') {
+		file[state->curr_line][strlen(line) - 1] = '\0';
+		line[strlen(line) - 1] = '\0';
+	}
+
+	const command_t *com = find_command(command_map, strtok_(line, " "));
 	if (com == NULL || com->fptr == NULL) {
 		ARRAY_ERR err = add_array(file[state->curr_line]);
 		if (err == ARRAY_OK) {
-		    free(line);
+		    free_(line);
 		    continue;
 		}
 		if (err == ARRAY_ERROR) {
 			show_error(state->curr_line, file[state->curr_line]);
 			dprintf(fstream, "%s\n", "bad syntax in array definition");
 			set_exit_state(-1);
-			free(line);
+			free_(line);
 			break;
 		}
 	    if (file[state->curr_line][strlen(line) - 1] != ':') {
 		show_error(state->curr_line, file[state->curr_line]);
-		dprintf(fstream, "%s \"%s\"\n", "unknown expression", strtok(file[state->curr_line], " "));
+		dprintf(fstream, "%s \"%s\"\n", "unknown expression", strtok_(file[state->curr_line], " "));
 		set_exit_state(-1);
-		free(line);
+		free_(line);
 		break;
 	    }
 	    add_label(line, state->curr_line);
-	    if (!found_main && strcmp(line, "main:") == 0)
+	    if (!found_main && strcmp__(line, "main:") == 0)
 		found_main = 1;
-	    free(line);
+	    free_(line);
 	    continue;
 	}
 	parse_arguments(file[state->curr_line]);
@@ -144,10 +195,10 @@ int pasm_run_script(const char *filename, char **file, size_t lines, int _fstrea
 	    set_exit_state(-1);
 	    break;
 	}
-	free(line);
+	free_(line);
     }
 
     int ret_code = get_exit_state();
-    free_script(file);
+    //free__script(file);
     return ret_code;
 }

@@ -4,6 +4,8 @@ x64/
 Debug/
 Release/
 build/
+bin
+obj
 *.obj
 *.a
 *.o

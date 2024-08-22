@@ -73,7 +73,7 @@ typedef enum E_ARRAY_ERR {
 } ARRAY_ERR;
 
 int init_state();
-void free_state();
+void free__state();
 void set_exit_state(int exit_state);
 int get_exit_state();
 LABEL_ERR add_label(char *label, int line);

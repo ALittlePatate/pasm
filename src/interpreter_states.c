@@ -1,4 +1,5 @@
 #include "interpreter_states.h"
+#include "libc.h"
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
@@ -9,42 +10,42 @@ extern int dprintf(int stream, const char *format, ...);
 
 s_state *state = NULL;
 int init_state() {
-    state = malloc(sizeof(s_state));
+    state = malloc_(sizeof(s_state));
     if (state == NULL)
 	return 1;
-    memset(state, 0, sizeof(s_state));
-    state->registers = malloc(sizeof(s_registers));
+    memset__(state, 0, sizeof(s_state));
+    state->registers = malloc_(sizeof(s_registers));
     if (state->registers == NULL) {
-	free(state);
+	free_(state);
 	return 1;
     }
-    memset(state->registers, 0, sizeof(s_registers));
-    state->args = malloc(sizeof(s_arguments));
+    memset__(state->registers, 0, sizeof(s_registers));
+    state->args = malloc_(sizeof(s_arguments));
     if (state->args == NULL) {
-	free(state->registers);
-	free(state);
+	free_(state->registers);
+	free_(state);
 	return 1;
     }
-    state->args->arg1 = malloc(sizeof(char) * MAX_ARG_SIZE);
-    state->args->arg2 = malloc(sizeof(char) * MAX_ARG_SIZE);
+    state->args->arg1 = malloc_(sizeof(char) * MAX_ARG_SIZE);
+    state->args->arg2 = malloc_(sizeof(char) * MAX_ARG_SIZE);
     if (state->args->arg1 == NULL || state->args->arg2 == NULL) {
-	free(state->registers);
-	free(state);
+	free_(state->registers);
+	free_(state);
 	return 1;
     }
-    memset(state->args->arg1, 0, sizeof(char) * MAX_ARG_SIZE);
-    memset(state->args->arg2, 0, sizeof(char) * MAX_ARG_SIZE);
-    state->labels_values = malloc(sizeof(int) * MAX_LABELS);
+    memset__(state->args->arg1, 0, sizeof(char) * MAX_ARG_SIZE);
+    memset__(state->args->arg2, 0, sizeof(char) * MAX_ARG_SIZE);
+    state->labels_values = malloc_(sizeof(int) * MAX_LABELS);
     if (state->labels_values == NULL) {
-	free(state->registers);
-	free(state->args->arg1);
-	free(state->args->arg2);
-	free(state);
+	free_(state->registers);
+	free_(state->args->arg1);
+	free_(state->args->arg2);
+	free_(state);
 	return 1;
     }
-    memset(state->labels_values, 0, sizeof(int) * MAX_LABELS);
-    memset(state->RET_STACK, -1, sizeof(int) * STACK_SIZE);
-    memset(state->STACK, 0, sizeof(long long) * STACK_SIZE);
+    memset__(state->labels_values, 0, sizeof(int) * MAX_LABELS);
+    memset__(state->RET_STACK, -1, sizeof(int) * STACK_SIZE);
+    memset__(state->STACK, 0, sizeof(long long) * STACK_SIZE);
     state->num_arrays = 0;
     state->RET_STACK_IDX = -1;
     state->STACK_IDX = -1;
@@ -54,28 +55,28 @@ int init_state() {
     return 0;
 }
 
-void free_state() {
+void free__state() {
     for (int i = 0; i < state->num_labels; i++) {
 	if (state->labels[i])
-	    free(state->labels[i]);
+	    free_(state->labels[i]);
     }
-    free(state->labels);
-    free(state->labels_values);
+    free_(state->labels);
+    free_(state->labels_values);
 
     for (int j = 0; j < state->num_arrays; j++) {
 		if (state->ARRAYS_NAME[j])
-			free(state->ARRAYS_NAME[j]);
+			free_(state->ARRAYS_NAME[j]);
         if (state->ARRAYS_VALUES[j])
-            free(state->ARRAYS_VALUES[j]);
+            free_(state->ARRAYS_VALUES[j]);
     }
-    free(state->ARRAYS_NAME);
-    free(state->ARRAYS_VALUES);
-    free(state->registers);
-    free(state->args->arg1);
-    free(state->args->arg2);
-    free(state->args);
+    free_(state->ARRAYS_NAME);
+    free_(state->ARRAYS_VALUES);
+    free_(state->registers);
+    free_(state->args->arg1);
+    free_(state->args->arg2);
+    free_(state->args);
 
-    free(state);
+    free_(state);
 }
 
 void set_exit_state(int exit_state) {
@@ -93,11 +94,11 @@ LABEL_ERR add_label(char *label, int line) {
 	return LABEL_MAX;
 
     for (int i = 0; i < state->num_labels; i++)
-	if (strcmp(label, state->labels[i]) == 0)
+	if (strcmp__(label, state->labels[i]) == 0)
 	    return LABEL_ALREADY_EXISTS;
     
 #ifdef _WIN32
-    char *line_copy = _strdup(label);
+    char *line_copy = strdup_(label);
 #else
     char *line_copy = strdup(label);
 #endif
@@ -105,7 +106,7 @@ LABEL_ERR add_label(char *label, int line) {
 	dprintf(fstream, "Error allocating memory.\n");
 	return LABEL_ERROR;
     }
-    char **temp = realloc(state->labels, (state->num_labels + 1) * sizeof(char*));
+    char **temp = realloc_(state->labels, (state->num_labels + 1) * sizeof(char*));
     if (temp == NULL) {
 	dprintf(fstream, "Error allocating memory.\n");
 	return LABEL_ERROR;
@@ -118,35 +119,35 @@ LABEL_ERR add_label(char *label, int line) {
 
 ARRAY_ERR add_array(char* line) {
 #ifdef _WIN32
-    char *line_copy = _strdup(line);
+    char *line_copy = strdup_(line);
 #else
     char *line_copy = strdup(line);
 #endif
-    if (strncmp(line, "set", 3) != 0) {
-        free(line_copy);
+    if (strncmp__(line, "set", 3) != 0) {
+        free_(line_copy);
         return ARRAY_NOT_AN_ARRAY;
     }
-    char *ptr = strtok(line_copy, " "); //set
-    ptr = strtok(NULL, " "); //array name
+    char *ptr = strtok_(line_copy, " "); //set
+    ptr = strtok_(NULL, " "); //array name
     if (ptr == NULL || strlen(line) <= (4 + strlen(ptr))) {
-        free(line_copy);
+        free_(line_copy);
         return ARRAY_ERROR;
     }
 
-	char **temp = realloc(state->ARRAYS_NAME, (state->num_arrays + 1) * sizeof(char*));
+	char **temp = realloc_(state->ARRAYS_NAME, (state->num_arrays + 1) * sizeof(char*));
 	if (temp == NULL) {
 		dprintf(fstream, "Error allocating memory.\n");
 		return ARRAY_ERROR;
 	}
 	state->ARRAYS_NAME = temp;
 #ifdef _WIN32
-	state->ARRAYS_NAME[state->num_arrays] = _strdup(ptr);
+	state->ARRAYS_NAME[state->num_arrays] = strdup_(ptr);
 #else
 	state->ARRAYS_NAME[state->num_arrays] = strdup(ptr);
 #endif
     ptr += strlen(ptr) + 1; //getting the data in the array, data is data after all
     if (ptr == NULL || ptr[0] == ' ' || ptr[0] == '\0') {
-        free(line_copy);
+        free_(line_copy);
         return ARRAY_ERROR;
     }
 
@@ -157,19 +158,19 @@ ARRAY_ERR add_array(char* line) {
         ++ptr;
         while (*ptr++ != '"') {
             if (*ptr == '\0') {
-                free(line_copy);
+                free_(line_copy);
                 return ARRAY_ERROR; //" is never closed
             }
             ++array_size;
         }
-        long long *tmp = realloc(arr, array_size * sizeof(long long));
+        long long *tmp = realloc_(arr, array_size * sizeof(long long));
         if (tmp == NULL || array_size == 0) {
 			dprintf(fstream, "Error allocating memory.\n");
 			return ARRAY_ERROR;
         }
         arr = tmp;
-        memset(arr, 0, array_size);
-		long long **temp = realloc(state->ARRAYS_VALUES, (state->num_arrays + 1) * sizeof(long long*));
+        memset__(arr, 0, array_size);
+		long long **temp = realloc_(state->ARRAYS_VALUES, (state->num_arrays + 1) * sizeof(long long*));
 		if (temp == NULL) {
 			dprintf(fstream, "Error allocating memory.\n");
 			return ARRAY_ERROR;
@@ -180,10 +181,10 @@ ARRAY_ERR add_array(char* line) {
         ++ptr;
         while (*ptr != '"') {
             if (*ptr == '\0' || i >= array_size) {
-                free(line_copy);
+                free_(line_copy);
                 return ARRAY_ERROR; //" is never closed
             }
-            if (strncmp(ptr, "\\0", 2) == 0) {
+            if (strncmp__(ptr, "\\0", 2) == 0) {
                 arr[i++] = 0;
                 break;
             }
@@ -192,58 +193,58 @@ ARRAY_ERR add_array(char* line) {
         state->ARRAYS_VALUES[state->num_arrays++] = arr;
         return ARRAY_OK;
     }
-    ptr = strtok(ptr, ",");
+    ptr = strtok_(ptr, ",");
     while (ptr != NULL) {
         array_size++;
-        ptr = strtok(NULL, ",");
+        ptr = strtok_(NULL, ",");
     }
-	long long *tmp2 = realloc(arr, array_size * sizeof(long long));
+	long long *tmp2 = realloc_(arr, array_size * sizeof(long long));
 	if (tmp2 == NULL || array_size == 0) {
 		dprintf(fstream, "Error allocating memory.\n");
 		return ARRAY_ERROR;
 	}
 	arr = tmp2;
-	memset(arr, 0, array_size);
-	long long **temp2 = realloc(state->ARRAYS_VALUES, (state->num_arrays + 1) * sizeof(long long*));
+	memset__(arr, 0, array_size);
+	long long **temp2 = realloc_(state->ARRAYS_VALUES, (state->num_arrays + 1) * sizeof(long long*));
 	if (temp2 == NULL) {
 		dprintf(fstream, "Error allocating memory.\n");
 		return ARRAY_ERROR;
 	}
 	state->ARRAYS_VALUES = temp2;
     ptr = line + 4 + strlen(state->ARRAYS_NAME[state->num_arrays]) + 1; //leave me alone i'm tired
-    ptr = strtok(ptr, ",");
+    ptr = strtok_(ptr, ",");
     int j = 0;
     while (ptr != NULL && j < array_size) {
         if (ptr[0] == ' ')
             ++ptr;
         if (strlen(ptr) > 2 && ptr[0] == '0' && ptr[1] == 'x') {
-			arr[j++] = strtol(ptr, NULL, 16);
+			arr[j++] = strtol_(ptr, NULL, 16);
         }
         else {
-			arr[j++] = atoi(ptr);
+			arr[j++] = strtol_(ptr, NULL, 10);
         }
-        ptr = strtok(NULL, ",");
+        ptr = strtok_(NULL, ",");
     }
 	state->ARRAYS_VALUES[state->num_arrays++] = arr;
-    free(line_copy);
+    free_(line_copy);
     return ARRAY_OK;
 }
 
 char *extract_arg(char *ptr, int a) {
     char *arg = 0;
-    char *ptr2 = strstr(ptr, ";");
+    char *ptr2 = strstr__(ptr, ";");
     if (ptr2)
 	ptr2[0] = '\0';
     if (a == 0) {
-	arg = strtok(ptr, ",");
+	arg = strtok_(ptr, ",");
     } else {
-	arg = strtok(NULL, ",");
+	arg = strtok_(NULL, ",");
     }
     if (arg == NULL)
 	return NULL;
     if (arg[0] == ' ')
 	arg++;
-    ptr2 = strstr(arg, " ");
+    ptr2 = strstr__(arg, " ");
     if (ptr2)
 	ptr2[0] = '\0';
     return arg;
@@ -267,26 +268,26 @@ int parse_arguments(char *line) {
     strcpy(state->args->arg2, "");
     
 #ifdef _WIN32
-    char *line_cpy = _strdup(line);
+    char *line_cpy = strdup_(line);
 #else
     char *line_cpy = strdup(line);
 #endif
-    char *ptr = strstr(line_cpy, " ");
+    char *ptr = strstr__(line_cpy, " ");
     char *arg = 0;
     if (!ptr) {
-	free(line_cpy);
+	free_(line_cpy);
 	return 0;
     }
     if ((arg = extract_arg(ptr, 0)) == NULL) {
-	free(line_cpy);
+	free_(line_cpy);
 	return 0;
     }
     strcpy(state->args->arg1, arg);
     if ((arg = extract_arg(ptr, 1)) == NULL) {
-	free(line_cpy);
+	free_(line_cpy);
 	return 0;
     }
     strcpy(state->args->arg2, arg);
-    free(line_cpy);
+    free_(line_cpy);
     return 0;
 }

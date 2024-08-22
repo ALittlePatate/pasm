@@ -6,6 +6,7 @@
 #endif
 
 #include <stdio.h>
+#include "libc.h"
 
 #ifdef _WIN32
 extern int dprintf(int stream, const char *format, ...);
@@ -17,8 +18,8 @@ void api_put() {
 
     int f = fstream;
 #ifdef _WIN32
-    if (f == _fileno(stderr))
-		f = _fileno(stdout);
+    if (f == 2) //stderr (could use _fileno(stderr) but it uses the stdlib)
+		f = 1; //stdout
 #else
     if (f == fileno(stderr))
 		f = fileno(stdout);
@@ -31,42 +32,12 @@ void api_put() {
 	dprintf(f, "%c", c); //using printf and not write because of the buffer
     }
     else {
-	dprintf(f, "%lld", state->STACK[state->STACK_IDX--]);
+#ifdef _WIN32
+		dprintf(f, "%ld", state->STACK[state->STACK_IDX--]);
+#else
+		dprintf(f, "%lld", state->STACK[state->STACK_IDX--]);
+#endif
     }
-}
-
-void api_getasynckeystate() {
-    #ifdef _WIN32
-	state->registers->eax = GetAsyncKeyState((int)state->STACK[state->STACK_IDX--]);
-    #else
-	state->STACK_IDX--;
-	state->registers->eax = 1;
-    #endif
-}
-
-void api_virtualalloc() {
-#ifdef _WIN32
-    long long address = state->STACK[state->STACK_IDX--];
-    long long size = state->STACK[state->STACK_IDX--];
-    long long alloctype = state->STACK[state->STACK_IDX--];
-    long long flprotect = state->STACK[state->STACK_IDX--];
-    state->registers->eax = (long long)VirtualAlloc((LPVOID)address, (SIZE_T)size, (DWORD)alloctype, (DWORD)flprotect);
-#else
-    state->STACK_IDX -= 4;
-    state->registers->eax = 1;
-#endif
-}
-
-void api_virtualfree() {
-#ifdef _WIN32
-    long long address = state->STACK[state->STACK_IDX--];
-    long long size = state->STACK[state->STACK_IDX--];
-    long long freetype = state->STACK[state->STACK_IDX--];
-    state->registers->eax = VirtualFree((LPVOID)address, (SIZE_T)size, (DWORD)freetype);
-#else
-    state->STACK_IDX -= 3;
-    state->registers->eax = 1;
-#endif
 }
 
 void api_callrawaddr() {
@@ -74,3 +45,55 @@ void api_callrawaddr() {
 
     ((void (*)())address)();
 }
+
+// generated APIs here
+
+#ifdef _WIN32
+    typedef LPVOID(WINAPI *fVirtualAlloc)(LPVOID, DWORD, DWORD, DWORD);
+#endif
+void api_VirtualAlloc(void) {
+#ifdef _WIN32
+    fVirtualAlloc pVirtualAlloc = GetApi(L"kernel32.dll", "VirtualAlloc");
+    long long arg0 = state->STACK[state->STACK_IDX--];
+    long long arg1 = state->STACK[state->STACK_IDX--];
+    long long arg2 = state->STACK[state->STACK_IDX--];
+    long long arg3 = state->STACK[state->STACK_IDX--];
+    state->registers->eax = (long long)pVirtualAlloc((LPVOID)arg0, (DWORD)arg1, (DWORD)arg2, (DWORD)arg3);
+#else
+    state->STACK_IDX -= 4;
+    state->registers->eax = 1;
+#endif
+}
+
+
+#ifdef _WIN32
+    typedef BOOL(WINAPI *fVirtualFree)(LPVOID, DWORD, DWORD);
+#endif
+void api_VirtualFree(void) {
+#ifdef _WIN32
+    fVirtualFree pVirtualFree = GetApi(L"kernel32.dll", "VirtualFree");
+    long long arg0 = state->STACK[state->STACK_IDX--];
+    long long arg1 = state->STACK[state->STACK_IDX--];
+    long long arg2 = state->STACK[state->STACK_IDX--];
+    state->registers->eax = (long long)pVirtualFree((LPVOID)arg0, (DWORD)arg1, (DWORD)arg2);
+#else
+    state->STACK_IDX -= 3;
+    state->registers->eax = 1;
+#endif
+}
+
+
+#ifdef _WIN32
+    typedef SHORT(WINAPI *fGetAsyncKeyState)(int);
+#endif
+void api_GetAsyncKeyState(void) {
+#ifdef _WIN32
+    fGetAsyncKeyState pGetAsyncKeyState = GetApi(L"user32.dll", "GetAsyncKeyState");
+    long long arg0 = state->STACK[state->STACK_IDX--];
+    state->registers->eax = (long long)pGetAsyncKeyState((int)arg0);
+#else
+    state->STACK_IDX -= 1;
+    state->registers->eax = 1;
+#endif
+}
+

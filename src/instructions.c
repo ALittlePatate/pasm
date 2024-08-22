@@ -1,13 +1,14 @@
 #include "instructions.h"
 #include "interpreter_states.h"
 #include "api.h"
+#include "libc.h"
 #include <math.h>
 #include <string.h>
 #include <stdlib.h>
 
 bool is_array(char* arg) {
     for (int i = 0; i < state->num_arrays; i++)
-        if (strcmp(state->ARRAYS_NAME[i], arg) == 0)
+        if (strcmp__(state->ARRAYS_NAME[i], arg) == 0)
             return true;
     return false;
 }
@@ -17,17 +18,17 @@ bool is_reg(char* arg) {
         ++arg;
     if (is_array(arg))
         return true;
-    return (strcmp(arg, "eax") == 0) || (((arg[0] == 'a' &&
+    return (strcmp__(arg, "eax") == 0) || (((arg[0] == 'a' &&
     ('1' <= arg[1] && arg[1] <= '9'))) && strlen(arg) == 2);
 }
 
 bool is_num(char* arg) {
-    return (atoi(arg) != 0 || (arg[0] == '0' && strlen(arg) == 1));
+    return (strtol_(arg, NULL, 10) != 0 || (arg[0] == '0' && strlen(arg) == 1));
 }
 
 bool check_args(s_arguments *args, int num_in_first, int num_args) {
-    int arg_num = strcmp(args->arg2, "") != 0;
-    arg_num += strcmp(args->arg1, "") != 0;
+    int arg_num = strcmp__(args->arg2, "") != 0;
+    arg_num += strcmp__(args->arg1, "") != 0;
     if (arg_num != num_args) {
 	state->last_check_args_code = WRONG_NUMBER;
 	return false;
@@ -50,7 +51,7 @@ long long* get_reg(char* reg_char) {
     if (reg_char[0] == '&' || reg_char[0] == '*')
         ++reg_char;
     for (int i = 0; i < state->num_arrays; i++)
-        if (strcmp(state->ARRAYS_NAME[i], reg_char) == 0)
+        if (strcmp__(state->ARRAYS_NAME[i], reg_char) == 0)
             return (long long *)&state->ARRAYS_VALUES[i];
     switch (reg_char[1]) {
 	case '1' :
@@ -91,9 +92,9 @@ long long get_value(char* arg) {
     }
     else {
         if (strlen(arg) > 2 && arg[0] == '0' && arg[1] == 'x') {
-            ret = strtol(arg, NULL, 16);
+            ret = strtol_(arg, NULL, 16);
         }
-		ret = atoi(arg);
+		ret = strtol_(arg, NULL, 10);
     }
     return ret;
 }
@@ -103,7 +104,7 @@ const command_t *find_command(const command_t *commands, char *func)
     if (func == NULL)
         return NULL;
     for (int index = 0; commands[index].fptr != NULL; index += 1) {
-        if (strcmp(func, commands[index].command) == 0) {
+        if (strcmp__(func, commands[index].command) == 0) {
             return &commands[index];
         }
     }
@@ -151,7 +152,7 @@ void ret() {
 void jmp() {
     if (state->RET_STACK_IDX != -1 && !check_ret_stack()) return;
 
-    if (strcmp(state->args->arg1, "return") == 0) {
+    if (strcmp__(state->args->arg1, "return") == 0) {
 	ret();
 	return;
     }
@@ -161,13 +162,13 @@ void jmp() {
 	if (state->labels[i] == NULL) break;
 	if (strlen(state->labels[i]) - 1 != strlen(state->args->arg1))
 	    continue;
-	if (strncmp(state->args->arg1, state->labels[i], strlen(state->labels[i]) - 1) == 0) {
+	if (strncmp__(state->args->arg1, state->labels[i], strlen(state->labels[i]) - 1) == 0) {
 	    state->RET_STACK[++state->RET_STACK_IDX] = state->curr_line;
 	    state->curr_line = state->labels_values[i];
 	    return;
 	}
     }
-    int line_off = atoi(state->args->arg1);
+    int line_off = strtol_(state->args->arg1, NULL, 10);
     if (line_off) {
 	state->curr_line += line_off;
 	    return;
@@ -222,7 +223,9 @@ void _sqrt() {
 	return;
     }
 
+#ifndef LAIKA //Realistically Laika won't ever need sqrt, + that creates linker errors with the CRT
     *get_reg(state->args->arg1) = (long long)sqrt(get_value(state->args->arg1));
+#endif
 }
 
 void neg() {
@@ -238,7 +241,30 @@ void mul() {
 	return;
     }
 
+#ifdef LAIKA
+    //MSVC wants to link __allmul, but a mul is just a lot of add, isn't it ?
+
+    long long v1 = *get_reg(state->args->arg1);
+    long long v2 = get_value(state->args->arg2);
+    long long result = 0;
+    int isNegative = 0;
+
+    if (v1 < 0) {
+        v1 = -v1;
+        isNegative = !isNegative;
+    }
+    if (v2 < 0) {
+        v2 = -v2;
+        isNegative = !isNegative;
+    }
+    while (v2 > 0) {
+        result += v1;
+        v2--;
+    }
+    v1 = isNegative ? -result : result;
+#else
     *get_reg(state->args->arg1) *= get_value(state->args->arg2);
+#endif
 }
 
 void _div() {
@@ -246,7 +272,32 @@ void _div() {
 	return;
     }
 
+#ifdef LAIKA
+    //MSVC wants to link __alldiv, but a div is just a lot of sub, isn't it ?
+
+    long long dividend = *get_reg(state->args->arg1);
+    long long divisor = get_value(state->args->arg2);
+
+    long long quotient = 0;
+    long long sign = 1;
+
+    if (dividend < 0) {
+        dividend = -dividend;
+        sign = -sign;
+    }
+    if (divisor < 0) {
+        divisor = -divisor;
+        sign = -sign;
+    }
+    while (dividend >= divisor) {
+        dividend -= divisor;
+        quotient++;
+    }
+
+    dividend = sign * quotient;
+#else
     *get_reg(state->args->arg1) /= get_value(state->args->arg2);
+#endif
 }
 
 void mov() {

@@ -3,6 +3,7 @@
 #include <stdio.h>
 
 #include "interpreter_states.h"
+#include "libc.h"
 
 #define MAX_LINE 2048 
 
@@ -12,6 +13,7 @@ extern int dprintf(int stream, const char *format, ...);
 
 size_t line_count = 0;
 int read_script(const char *filename, char ***buf, size_t *lines) {
+#ifndef LAIKA
     FILE *script = fopen(filename, "r");
     if (script == NULL) {
         dprintf(fstream, "Could not open %s.\n", filename);
@@ -25,11 +27,11 @@ int read_script(const char *filename, char ***buf, size_t *lines) {
             line[length - 1] = '\0';
         }
 #ifdef _WIN32
-		char *line_copy = _strdup(line);
+		char *line_copy = strdup_(line);
 #else
 		char *line_copy = strdup(line);
 #endif
-        char **temp = realloc(*buf, (line_count + 1) * sizeof(char*));
+        char **temp = realloc_(*buf, (line_count + 1) * sizeof(char*));
         if (temp == NULL) {
             dprintf(fstream, "Error allocating memory.\n");
             return 1;
@@ -44,15 +46,16 @@ int read_script(const char *filename, char ***buf, size_t *lines) {
 
     *lines = line_count;
     fclose(script);
+#endif
     return 0;
 }
 
-void free_script(char **buf) {
+void free__script(char **buf) {
     if (!buf)
         return;
     for (size_t i = 0; i < line_count; ++i)
         if (buf[i])
-            free(buf[i]);
-    free(buf);
-    free_state();
+            free_(buf[i]);
+    free_(buf);
+    free__state();
 }
