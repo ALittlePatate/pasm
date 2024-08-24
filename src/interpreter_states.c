@@ -154,6 +154,7 @@ ARRAY_ERR add_array(char* line) {
     char* start_of_values = ptr;
     int array_size = 0;
     long long *arr = NULL;
+    char* arr_char = NULL;
     if (ptr[0] == '"') {
         ++ptr;
         while (*ptr++ != '"') {
@@ -163,13 +164,13 @@ ARRAY_ERR add_array(char* line) {
             }
             ++array_size;
         }
-        long long *tmp = realloc_(arr, array_size * sizeof(long long));
+        char *tmp = realloc_(arr_char, array_size * sizeof(char));
         if (tmp == NULL || array_size == 0) {
 			dprintf(fstream, "Error allocating memory.\n");
 			return ARRAY_ERROR;
         }
-        arr = tmp;
-        memset__(arr, 0, array_size);
+        arr_char = tmp;
+        memset__(arr_char, 0, array_size);
 		long long **temp = realloc_(state->ARRAYS_VALUES, (state->num_arrays + 1) * sizeof(long long*));
 		if (temp == NULL) {
 			dprintf(fstream, "Error allocating memory.\n");
@@ -185,12 +186,12 @@ ARRAY_ERR add_array(char* line) {
                 return ARRAY_ERROR; //" is never closed
             }
             if (strncmp__(ptr, "\\0", 2) == 0) {
-                arr[i++] = 0;
+                arr_char[i++] = 0;
                 break;
             }
-            arr[i++] = (long long)* ptr++;
+            arr_char[i++] = (long long)* ptr++;
         }
-        state->ARRAYS_VALUES[state->num_arrays++] = arr;
+        state->ARRAYS_VALUES[state->num_arrays++] = arr_char;
         return ARRAY_OK;
     }
     ptr = strtok_(ptr, ",");

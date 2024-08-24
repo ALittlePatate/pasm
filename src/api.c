@@ -40,6 +40,19 @@ void api_put() {
     }
 }
 
+void api_print() {
+    char *address = (char *)state->STACK[state->STACK_IDX--];
+    int f = fstream;
+#ifdef _WIN32
+    if (f == 2) //stderr (could use _fileno(stderr) but it uses the stdlib)
+        f = 1; //stdout
+#else
+    if (f == fileno(stderr))
+        f = fileno(stdout);
+#endif
+    dprintf(f, "%s", address);
+}
+
 void api_callrawaddr() {
     long long address = state->STACK[state->STACK_IDX--];
 

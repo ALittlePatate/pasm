@@ -2,6 +2,7 @@
 #include "instructions.h"
 
 void api_put();
+void api_print();
 void api_callrawaddr();
 
 // generated APIs here
@@ -13,6 +14,7 @@ void api_GetAsyncKeyState();
 
 static const command_t api_map[] = {
     {.command = "put", .fptr = api_put},
+    {.command = "print", .fptr = api_print},
     {.command = "CallRawAddress", .fptr = api_callrawaddr},
 
 // generated APIs here
