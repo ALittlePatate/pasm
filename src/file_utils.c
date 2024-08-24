@@ -56,6 +56,8 @@ void free__script(char **buf) {
     for (size_t i = 0; i < line_count; ++i)
         if (buf[i])
             free_(buf[i]);
+#ifndef LAIKA //crashes otherwise, idk if it's due to the script being passed as a char** or what
     free_(buf);
+#endif
     free__state();
 }

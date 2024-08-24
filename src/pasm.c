@@ -205,6 +205,6 @@ int pasm_run_script(const char *filename, char **file, size_t lines, int _fstrea
     }
 
     int ret_code = get_exit_state();
-    //free__script(file);
+    free__script(file);
     return ret_code;
 }
