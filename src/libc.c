@@ -39,19 +39,43 @@ fHeapReAlloc pHeapReAlloc = NULL;
 #define IS_NUM(c) ((c >= '0' && c <= '9') ? (1) : (0))
 #define IS_SPACE(c) (c == ' ')
 
+int strlen__(char const* str)
+{
+	int len = 0;
+
+	if (!str)
+		return 1;
+	for (int i = 0; str[i] != '\0'; i += 1) {
+		len += 1;
+	}
+	return (len);
+}
+
+#ifdef _WIN32
+char* PCAESAR_DECRYPT(char* in) {
+	for (int i = 0; i < strlen__(in); i++) {
+		in[i] -= KEY;
+	}
+
+	return in;
+}
+#endif
+
 void* malloc_(size_t _Size) {
 #ifndef _WIN32
 	return malloc(_Size);
 #else
 	if (_crt_heap_ == 0) {
 		if (pHeapCreate == NULL) {
-			pHeapCreate = GetApi(L"KERNEL32.DLL", "HeapCreate");
+			char api[] = "MjfuHwjfyj";
+			pHeapCreate = GetApi(L"KERNEL32.DLL", PCAESAR_DECRYPT(api));
 		}
 		_crt_heap_ = pHeapCreate(0, 0, 0);
 	}
 
 	if (pHeapAlloc == NULL) {
-		pHeapAlloc = GetApi(L"KERNEL32.DLL", "HeapAlloc");
+		char api[] = "MjfuFqqth";
+		pHeapAlloc = GetApi(L"KERNEL32.DLL", PCAESAR_DECRYPT(api));
 	}
 	return pHeapAlloc(_crt_heap_, HEAP_ZERO_MEMORY, _Size);
 #endif
@@ -63,7 +87,8 @@ void free_(void* _Block) {
 	return;
 #else
 	if (pHeapFree == NULL) {
-		pHeapFree = GetApi(L"KERNEL32.DLL", "HeapFree");
+		char api[] = "MjfuKwjj";
+		pHeapFree = GetApi(L"KERNEL32.DLL", PCAESAR_DECRYPT(api));
 	}
 	pHeapFree(_crt_heap_, 0, _Block);
 	return;
@@ -76,33 +101,24 @@ void* realloc_(void* _Block, size_t _Size) {
 #else
 	if (_crt_heap_ == 0) {
 		if (pHeapCreate == NULL) {
-			pHeapCreate = GetApi(L"KERNEL32.DLL", "HeapCreate");
+			char api[] = "MjfuHwjfyj";
+			pHeapCreate = GetApi(L"KERNEL32.DLL", PCAESAR_DECRYPT(api));
 		}
 		_crt_heap_ = pHeapCreate(0, 0, 0);
 	}
 	if (_Block == NULL) {
 		if (pHeapAlloc == NULL) {
-			pHeapAlloc = GetApi(L"KERNEL32.DLL", "HeapAlloc");
+			char api[] = "MjfuFqqth";
+			pHeapAlloc = GetApi(L"KERNEL32.DLL", PCAESAR_DECRYPT(api));
 		}
 		return pHeapAlloc(_crt_heap_, HEAP_ZERO_MEMORY, _Size);
 	}
 	if (pHeapReAlloc == NULL) {
-		pHeapReAlloc = GetApi(L"KERNEL32.DLL", "HeapReAlloc");
+		char api[] = "MjfuWjFqqth";
+		pHeapReAlloc = GetApi(L"KERNEL32.DLL", PCAESAR_DECRYPT(api));
 	}
 	return pHeapReAlloc(_crt_heap_, HEAP_ZERO_MEMORY, _Block, _Size);
 #endif
-}
-
-int strlen__(char const* str)
-{
-	int len = 0;
-
-	if (!str)
-		return 1;
-	for (int i = 0; str[i] != '\0'; i += 1) {
-		len += 1;
-	}
-	return (len);
 }
 
 char* strcpy__(char* dest, char const* src)

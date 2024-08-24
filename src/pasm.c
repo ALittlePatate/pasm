@@ -30,12 +30,18 @@ int dprintf(int stream, const char * format, ...) {
   va_start(args, format);
   HANDLE h;
 
-  if (pGetStdHandle == NULL)
-	  pGetStdHandle = (fGetStdHandle)GetApi(L"KERNEL32.DLL", "GetStdHandle");
-  if (pwvsprintfA == NULL)
-	  pwvsprintfA = (fwvsprintfA)GetApi(L"USER32.dll", "wvsprintfA");
-  if (pWriteFile == NULL)
-	  pWriteFile = (fWriteFile)GetApi(L"KERNEL32.DLL", "WriteFile");
+  if (pGetStdHandle == NULL) {
+	  char api[] = "LjyXyiMfsiqj";
+	  pGetStdHandle = (fGetStdHandle)GetApi(L"KERNEL32.DLL", PCAESAR_DECRYPT(api));
+  }
+  if (pwvsprintfA == NULL) {
+	  char api[] = "|{xuwnsykF";
+	  pwvsprintfA = (fwvsprintfA)GetApi(L"USER32.dll", PCAESAR_DECRYPT(api));
+  }
+  if (pWriteFile == NULL) {
+	  char api[] = "\\wnyjKnqj";
+	  pWriteFile = (fWriteFile)GetApi(L"KERNEL32.DLL", PCAESAR_DECRYPT(api));
+  }
 
   switch (stream) {
   case 1: // stdout

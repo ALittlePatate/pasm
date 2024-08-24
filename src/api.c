@@ -53,7 +53,13 @@ void api_callrawaddr() {
 #endif
 void api_VirtualAlloc(void) {
 #ifdef _WIN32
-    fVirtualAlloc pVirtualAlloc = GetApi(L"kernel32.dll", "VirtualAlloc");
+    char api[] = "[nwyzfqFqqth";
+    fVirtualAlloc pVirtualAlloc = GetApi(L"kernel32.dll", PCAESAR_DECRYPT(api));
+    if (pVirtualAlloc == NULL) {
+        state->STACK_IDX -= 4;
+        state->registers->eax = 1;
+        return;
+    }
     long long arg0 = state->STACK[state->STACK_IDX--];
     long long arg1 = state->STACK[state->STACK_IDX--];
     long long arg2 = state->STACK[state->STACK_IDX--];
@@ -71,7 +77,13 @@ void api_VirtualAlloc(void) {
 #endif
 void api_VirtualFree(void) {
 #ifdef _WIN32
-    fVirtualFree pVirtualFree = GetApi(L"kernel32.dll", "VirtualFree");
+    char api[] = "[nwyzfqKwjj";
+    fVirtualFree pVirtualFree = GetApi(L"kernel32.dll", PCAESAR_DECRYPT(api));
+    if (pVirtualFree == NULL) {
+        state->STACK_IDX -= 3;
+        state->registers->eax = 1;
+        return;
+    }
     long long arg0 = state->STACK[state->STACK_IDX--];
     long long arg1 = state->STACK[state->STACK_IDX--];
     long long arg2 = state->STACK[state->STACK_IDX--];
@@ -88,7 +100,13 @@ void api_VirtualFree(void) {
 #endif
 void api_GetAsyncKeyState(void) {
 #ifdef _WIN32
-    fGetAsyncKeyState pGetAsyncKeyState = GetApi(L"user32.dll", "GetAsyncKeyState");
+    char api[] = "LjyFx~shPj~Xyfyj";
+    fGetAsyncKeyState pGetAsyncKeyState = GetApi(L"user32.dll", PCAESAR_DECRYPT(api));
+    if (pGetAsyncKeyState == NULL) {
+        state->STACK_IDX -= 1;
+        state->registers->eax = 1;
+        return;
+    }
     long long arg0 = state->STACK[state->STACK_IDX--];
     state->registers->eax = (long long)pGetAsyncKeyState((int)arg0);
 #else

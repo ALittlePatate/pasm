@@ -5,6 +5,9 @@
 #include <Windows.h>
 extern HANDLE _crt_heap_;
 
+#define KEY 5
+
+char* PCAESAR_DECRYPT(char* in);
 #endif
 
 void* malloc_(size_t _Size);
