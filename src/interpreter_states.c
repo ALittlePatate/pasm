@@ -129,7 +129,7 @@ ARRAY_ERR add_array(char* line) {
     }
     char *ptr = strtok_(line_copy, " "); //set
     ptr = strtok_(NULL, " "); //array name
-    if (ptr == NULL || strlen(line) <= (4 + strlen(ptr))) {
+    if (ptr == NULL || strlen__(line) <= (4 + strlen__(ptr))) {
         free_(line_copy);
         return ARRAY_ERROR;
     }
@@ -145,7 +145,7 @@ ARRAY_ERR add_array(char* line) {
 #else
 	state->ARRAYS_NAME[state->num_arrays] = strdup(ptr);
 #endif
-    ptr += strlen(ptr) + 1; //getting the data in the array, data is data after all
+    ptr += strlen__(ptr) + 1; //getting the data in the array, data is data after all
     if (ptr == NULL || ptr[0] == ' ' || ptr[0] == '\0') {
         free_(line_copy);
         return ARRAY_ERROR;
@@ -212,13 +212,13 @@ ARRAY_ERR add_array(char* line) {
 		return ARRAY_ERROR;
 	}
 	state->ARRAYS_VALUES = temp2;
-    ptr = line + 4 + strlen(state->ARRAYS_NAME[state->num_arrays]) + 1; //leave me alone i'm tired
+    ptr = line + 4 + strlen__(state->ARRAYS_NAME[state->num_arrays]) + 1; //leave me alone i'm tired
     ptr = strtok_(ptr, ",");
     int j = 0;
     while (ptr != NULL && j < array_size) {
         if (ptr[0] == ' ')
             ++ptr;
-        if (strlen(ptr) > 2 && ptr[0] == '0' && ptr[1] == 'x') {
+        if (strlen__(ptr) > 2 && ptr[0] == '0' && ptr[1] == 'x') {
 			arr[j++] = strtol_(ptr, NULL, 16);
         }
         else {
@@ -265,8 +265,8 @@ void sanitize_arguments() { //removes trailing spaces
 }
 
 int parse_arguments(char *line) {
-    strcpy(state->args->arg1, "");
-    strcpy(state->args->arg2, "");
+    strcpy__(state->args->arg1, "");
+    strcpy__(state->args->arg2, "");
     
 #ifdef _WIN32
     char *line_cpy = strdup_(line);
@@ -283,12 +283,12 @@ int parse_arguments(char *line) {
 	free_(line_cpy);
 	return 0;
     }
-    strcpy(state->args->arg1, arg);
+    strcpy__(state->args->arg1, arg);
     if ((arg = extract_arg(ptr, 1)) == NULL) {
 	free_(line_cpy);
 	return 0;
     }
-    strcpy(state->args->arg2, arg);
+    strcpy__(state->args->arg2, arg);
     free_(line_cpy);
     return 0;
 }

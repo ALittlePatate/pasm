@@ -1,0 +1,32 @@
+SRC = src/pasm.c \
+       src/file_utils.c \
+       src/interpreter_states.c \
+       src/instructions.c \
+       src/api.c \
+       src/debug.c \
+       src/libc.c
+OBJ = $(SRC:.c=.o)
+NAME = pasm
+CC = C:\Program Files\Microsoft Visual Studio\2022\Community\VC\Tools\Llvm\x64\bin\clang
+CFLAGS = -Os -Iinclude -fno-asynchronous-unwind-tables -DUNICODE -D_UNICODE -m32 -fwritable-strings -DLAIKA -nostdlib -D_WIN32_WINNT=0x0501
+
+all: $(NAME)
+
+lib: $(OBJ)
+	@if not exist bin (mkdir bin)
+	ar rc bin/$(NAME).lib $(OBJ)
+	ranlib bin/$(NAME).lib
+
+$(NAME): lib
+	$(CC) $(CFLAGS) -o bin/$(NAME) tests/interpreter.c -Lbin -lpasm
+
+interpreter: $(NAME)
+
+clean:
+	@if exist bin (del /q bin\*.*)
+	@if exist src\*.o (del /q src\*.o)
+
+fclean: clean
+	@if exist bin (rmdir bin)
+
+.PHONY: all $(NAME) interpreter lib clean fclean

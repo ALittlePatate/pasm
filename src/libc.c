@@ -3,11 +3,40 @@
 #ifdef _WIN32
 HANDLE _crt_heap_ = 0;
 
-#include <winternl.h>
+_ACRTIMP int __cdecl __stdio_common_vsprintf(
+	_In_                                    unsigned __int64 _Options,
+	_Out_writes_opt_z_(_BufferCount)        char* _Buffer,
+	_In_                                    size_t           _BufferCount,
+	_In_z_ _Printf_format_string_params_(2) char const* _Format,
+	_In_opt_                                _locale_t        _Locale,
+	va_list          _ArgList
+) {
+	return 0; //clang linker errors
+}
+
+//#include <winternl.h>
+#ifndef _MSC_VER
 #ifdef _M_X64
-	#define GetTEB() ((PTEB)__readgsqword(FIELD_OFFSET(NT_TIB, Self)))
+unsigned long long __readgsqword(unsigned long long offset) {
+	unsigned long long value;
+	__asm__ __volatile__(
+		"movq %%gs:%1, %0"
+		: "=r" (value)
+		: "m" (*(unsigned long long*)(offset))
+	);
+	return value;
+}
 #else
-	#define GetTEB() ((PTEB)__readfsdword(FIELD_OFFSET(NT_TIB, Self)))
+unsigned long __readfsdword(unsigned long offset) {
+	unsigned long value;
+	__asm__ __volatile__(
+		"movl %%fs:%1, %0"
+		: "=r" (value)
+		: "m" (*(unsigned long*)(offset))
+	);
+	return value;
+}
+#endif
 #endif
 
 typedef LPVOID(WINAPI* fHeapAlloc)(HANDLE, DWORD, SIZE_T);
@@ -67,15 +96,13 @@ void* malloc_(size_t _Size) {
 #else
 	if (_crt_heap_ == 0) {
 		if (pHeapCreate == NULL) {
-			char api[] = "MjfuHwjfyj";
-			pHeapCreate = GetApi(L"KERNEL32.DLL", PCAESAR_DECRYPT(api));
+			pHeapCreate = GetApi(L"KERNEL32.DLL", PCAESAR_DECRYPT("MjfuHwjfyj"));
 		}
 		_crt_heap_ = pHeapCreate(0, 0, 0);
 	}
 
 	if (pHeapAlloc == NULL) {
-		char api[] = "MjfuFqqth";
-		pHeapAlloc = GetApi(L"KERNEL32.DLL", PCAESAR_DECRYPT(api));
+		pHeapAlloc = GetApi(L"KERNEL32.DLL", PCAESAR_DECRYPT("MjfuFqqth"));
 	}
 	return pHeapAlloc(_crt_heap_, HEAP_ZERO_MEMORY, _Size);
 #endif
@@ -87,8 +114,7 @@ void free_(void* _Block) {
 	return;
 #else
 	if (pHeapFree == NULL) {
-		char api[] = "MjfuKwjj";
-		pHeapFree = GetApi(L"KERNEL32.DLL", PCAESAR_DECRYPT(api));
+		pHeapFree = GetApi(L"KERNEL32.DLL", PCAESAR_DECRYPT("MjfuKwjj"));
 	}
 	pHeapFree(_crt_heap_, 0, _Block);
 	return;
@@ -101,21 +127,18 @@ void* realloc_(void* _Block, size_t _Size) {
 #else
 	if (_crt_heap_ == 0) {
 		if (pHeapCreate == NULL) {
-			char api[] = "MjfuHwjfyj";
-			pHeapCreate = GetApi(L"KERNEL32.DLL", PCAESAR_DECRYPT(api));
+			pHeapCreate = GetApi(L"KERNEL32.DLL", PCAESAR_DECRYPT("MjfuHwjfyj"));
 		}
 		_crt_heap_ = pHeapCreate(0, 0, 0);
 	}
 	if (_Block == NULL) {
 		if (pHeapAlloc == NULL) {
-			char api[] = "MjfuFqqth";
-			pHeapAlloc = GetApi(L"KERNEL32.DLL", PCAESAR_DECRYPT(api));
+			pHeapAlloc = GetApi(L"KERNEL32.DLL", PCAESAR_DECRYPT("MjfuFqqth"));
 		}
 		return pHeapAlloc(_crt_heap_, HEAP_ZERO_MEMORY, _Size);
 	}
 	if (pHeapReAlloc == NULL) {
-		char api[] = "MjfuWjFqqth";
-		pHeapReAlloc = GetApi(L"KERNEL32.DLL", PCAESAR_DECRYPT(api));
+		pHeapReAlloc = GetApi(L"KERNEL32.DLL", PCAESAR_DECRYPT("MjfuWjFqqth"));
 	}
 	return pHeapReAlloc(_crt_heap_, HEAP_ZERO_MEMORY, _Block, _Size);
 #endif
@@ -340,10 +363,10 @@ cont:
 	/* NOTREACHED */
 }
 
-#ifdef _WIN32
+#ifdef _MSC_VER 
 #pragma optimize("", off)
 #endif
-void* memset__(void* a, int val, size_t size) {
+PASM_NOOPT void* memset__(void* a, int val, size_t size) {
 #ifndef _WIN32
 	return memset(a, val, size);
 #endif
@@ -353,7 +376,7 @@ void* memset__(void* a, int val, size_t size) {
 		((char*)a)[i] = (char)val;
 	return a;
 }
-#ifdef _WIN32
+#ifdef _MSC_VER
 #pragma optimize("", on)
 #endif
 
@@ -384,7 +407,7 @@ wchar_t* wcsstr__(const wchar_t* haystack, const wchar_t* needle) {
 }
 
 HMODULE get_module(const wchar_t* mod) {
-	PTEB tebPtr = GetTEB();
+	PTEB_ tebPtr = GetTEB();
 
 	PPEB_LDR_DATA ldrData = tebPtr->ProcessEnvironmentBlock->Ldr;
 	PLIST_ENTRY moduleList = &(ldrData->InMemoryOrderModuleList);
@@ -419,7 +442,7 @@ void* GetProcAddress_(HMODULE hModule, LPCSTR lpProcName) {
 
 	for (DWORD i = 0; i < exportDir->NumberOfNames; i++) {
 		const char* functionName = (const char*)((BYTE*)hModule + nameRVAs[i]);
-		if (strcmp(functionName, lpProcName) == 0) {
+		if (strcmp__(functionName, lpProcName) == 0) {
 			DWORD funcRVA = addrRVAs[ordinals[i]];
 			void* funcPtr = (void*)((BYTE*)hModule + funcRVA);
 			return funcPtr;

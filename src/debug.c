@@ -109,8 +109,8 @@ int add_breakpoint(char *in, int *bp) {
 	return 1;
     bp_add(bp, line - 1);
     printf("breakpoint added at line %d.\n", line);
-    return 0;
 #endif
+    return 0;
 }
 
 int rem_breakpoint(char *in, int *bp) {
@@ -127,8 +127,8 @@ int rem_breakpoint(char *in, int *bp) {
 	return 1;
     bp_rem(bp, line - 1);
     printf("breakpoint at line %d deleted.\n", line);
-    return 0;
 #endif
+    return 0;
 }
 
 void debug_input(char *line) {

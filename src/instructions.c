@@ -19,11 +19,11 @@ bool is_reg(char* arg) {
     if (is_array(arg))
         return true;
     return (strcmp__(arg, "eax") == 0) || (((arg[0] == 'a' &&
-    ('1' <= arg[1] && arg[1] <= '9'))) && strlen(arg) == 2);
+    ('1' <= arg[1] && arg[1] <= '9'))) && strlen__(arg) == 2);
 }
 
 bool is_num(char* arg) {
-    return (strtol_(arg, NULL, 10) != 0 || (arg[0] == '0' && strlen(arg) == 1));
+    return (strtol_(arg, NULL, 10) != 0 || (arg[0] == '0' && strlen__(arg) == 1));
 }
 
 bool check_args(s_arguments *args, int num_in_first, int num_args) {
@@ -91,7 +91,7 @@ long long get_value(char* arg) {
         }
     }
     else {
-        if (strlen(arg) > 2 && arg[0] == '0' && arg[1] == 'x') {
+        if (strlen__(arg) > 2 && arg[0] == '0' && arg[1] == 'x') {
             ret = strtol_(arg, NULL, 16);
         }
 		ret = strtol_(arg, NULL, 10);
@@ -160,9 +160,9 @@ void jmp() {
     state->registers->eax = 0;
     for (int i = 0; i < state->num_labels; i++) {
 	if (state->labels[i] == NULL) break;
-	if (strlen(state->labels[i]) - 1 != strlen(state->args->arg1))
+	if (strlen__(state->labels[i]) - 1 != strlen__(state->args->arg1))
 	    continue;
-	if (strncmp__(state->args->arg1, state->labels[i], strlen(state->labels[i]) - 1) == 0) {
+	if (strncmp__(state->args->arg1, state->labels[i], strlen__(state->labels[i]) - 1) == 0) {
 	    state->RET_STACK[++state->RET_STACK_IDX] = state->curr_line;
 	    state->curr_line = state->labels_values[i];
 	    return;

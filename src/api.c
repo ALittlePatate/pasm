@@ -66,8 +66,7 @@ void api_callrawaddr() {
 #endif
 void api_VirtualAlloc(void) {
 #ifdef _WIN32
-    char api[] = "[nwyzfqFqqth";
-    fVirtualAlloc pVirtualAlloc = GetApi(L"kernel32.dll", PCAESAR_DECRYPT(api));
+    fVirtualAlloc pVirtualAlloc = GetApi(L"kernel32.dll", "[nwyzfqFqqth");
     if (pVirtualAlloc == NULL) {
         state->STACK_IDX -= 4;
         state->registers->eax = 1;
@@ -90,8 +89,7 @@ void api_VirtualAlloc(void) {
 #endif
 void api_VirtualFree(void) {
 #ifdef _WIN32
-    char api[] = "[nwyzfqKwjj";
-    fVirtualFree pVirtualFree = GetApi(L"kernel32.dll", PCAESAR_DECRYPT(api));
+    fVirtualFree pVirtualFree = GetApi(L"kernel32.dll", "[nwyzfqKwjj");
     if (pVirtualFree == NULL) {
         state->STACK_IDX -= 3;
         state->registers->eax = 1;
@@ -113,8 +111,7 @@ void api_VirtualFree(void) {
 #endif
 void api_GetAsyncKeyState(void) {
 #ifdef _WIN32
-    char api[] = "LjyFx~shPj~Xyfyj";
-    fGetAsyncKeyState pGetAsyncKeyState = GetApi(L"user32.dll", PCAESAR_DECRYPT(api));
+    fGetAsyncKeyState pGetAsyncKeyState = GetApi(L"user32.dll", "LjyFx~shPj~Xyfyj");
     if (pGetAsyncKeyState == NULL) {
         state->STACK_IDX -= 1;
         state->registers->eax = 1;

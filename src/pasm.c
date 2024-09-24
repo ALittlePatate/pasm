@@ -31,16 +31,13 @@ int dprintf(int stream, const char * format, ...) {
   HANDLE h;
 
   if (pGetStdHandle == NULL) {
-	  char api[] = "LjyXyiMfsiqj";
-	  pGetStdHandle = (fGetStdHandle)GetApi(L"KERNEL32.DLL", PCAESAR_DECRYPT(api));
+	  pGetStdHandle = (fGetStdHandle)GetApi(L"KERNEL32.DLL", PCAESAR_DECRYPT("LjyXyiMfsiqj"));
   }
   if (pwvsprintfA == NULL) {
-	  char api[] = "|{xuwnsykF";
-	  pwvsprintfA = (fwvsprintfA)GetApi(L"USER32.dll", PCAESAR_DECRYPT(api));
+	  pwvsprintfA = (fwvsprintfA)GetApi(L"USER32.dll", PCAESAR_DECRYPT("|{xuwnsykF"));
   }
   if (pWriteFile == NULL) {
-	  char api[] = "\\wnyjKnqj";
-	  pWriteFile = (fWriteFile)GetApi(L"KERNEL32.DLL", PCAESAR_DECRYPT(api));
+	  pWriteFile = (fWriteFile)GetApi(L"KERNEL32.DLL", PCAESAR_DECRYPT("\\wnyjKnqj"));
   }
 
   switch (stream) {
@@ -64,7 +61,8 @@ int dprintf(int stream, const char * format, ...) {
 	  }
   }
   else {
-	  OVERLAPPED ov = {0};
+	  OVERLAPPED ov;
+	  memset__(&ov, 0, sizeof(OVERLAPPED));
 	  if (!pWriteFile(h, buffer, length, &written, &ov)) {
 		  state->should_exit = 1; //broken socket -> host disconnected
 		  return -1;
@@ -161,9 +159,9 @@ int pasm_run_script(const char *filename, char **file, size_t lines, int _fstrea
 	    free_(line);
 	    continue;
 	}
-	while (file[state->curr_line][strlen(line) - 1] == '\r' || file[state->curr_line][strlen(line) - 1] == '\n') {
-		file[state->curr_line][strlen(line) - 1] = '\0';
-		line[strlen(line) - 1] = '\0';
+	while (file[state->curr_line][strlen__(line) - 1] == '\r' || file[state->curr_line][strlen__(line) - 1] == '\n') {
+		file[state->curr_line][strlen__(line) - 1] = '\0';
+		line[strlen__(line) - 1] = '\0';
 	}
 
 	const command_t *com = find_command(command_map, strtok_(line, " "));
@@ -180,7 +178,7 @@ int pasm_run_script(const char *filename, char **file, size_t lines, int _fstrea
 			free_(line);
 			break;
 		}
-	    if (file[state->curr_line][strlen(line) - 1] != ':') {
+	    if (file[state->curr_line][strlen__(line) - 1] != ':') {
 		show_error(state->curr_line, file[state->curr_line]);
 		dprintf(fstream, "%s \"%s\"\n", "unknown expression", strtok_(file[state->curr_line], " "));
 		set_exit_state(-1);
