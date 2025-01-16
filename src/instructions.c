@@ -78,7 +78,7 @@ long long apply_cast(long long val, char *arg) {
     return r;
 }
 
-long long* get_reg(char* arg) {
+long long* get_reg(char* arg, int dontderef) {
     char *reg_char = strdup_(arg);
     char *s = reg_char;
     strtok_(reg_char, ")");
@@ -99,6 +99,7 @@ long long* get_reg(char* arg) {
     }
     char c = reg_char[1];
     free_(s);
+    if (dontderef) deref = 1;
     switch (c) {
 	case '1' :
 	    return deref ? (long long*)state->registers->a1 : &state->registers->a1;
@@ -125,15 +126,19 @@ long long* get_reg(char* arg) {
     }
 }
 
-long long get_value(char* arg) {
+long long get_value(char* arg, int size) {
     long long ret = 0;
 
     if (is_reg(arg)) {
         if (arg[0] == '&') {
-	    return (long long)get_reg(arg);
+	    return (long long)get_reg(arg, 0);
         }
 	else {
-	    return *get_reg(arg);
+	    if (size == 1)
+		return *((char *)get_reg(arg, 0));
+	    if (size == 4)
+		return *((int *)get_reg(arg, 0));
+	    return *get_reg(arg, 0);
         }
     }
     else {
@@ -163,8 +168,8 @@ void cmp() {
 	return;
     }
 
-    long long a1_ = get_value(state->args->arg1);
-    long long a2_ = get_value(state->args->arg2);
+    long long a1_ = get_value(state->args->arg1, parse_argument_cast(state->args->arg1));
+    long long a2_ = get_value(state->args->arg2, parse_argument_cast(state->args->arg2));
     a2_ = apply_cast(a2_, state->args->arg2);
 
     if (a1_ == a2_) state->last_cmp_code = CMP_EQUAL;
@@ -253,7 +258,7 @@ void sub() {
     if (!check_args(state->args, 0, 2)) {
 	return;
     }
-    *get_reg(state->args->arg1) -= apply_cast(get_value(state->args->arg2), state->args->arg2);
+    *get_reg(state->args->arg1, 0) -= apply_cast(get_value(state->args->arg2, 0), state->args->arg2);
 }
 
 void add() {
@@ -261,7 +266,7 @@ void add() {
 	return;
     }
 
-    *get_reg(state->args->arg1) += apply_cast(get_value(state->args->arg2), state->args->arg2);
+    *get_reg(state->args->arg1 ,0) += apply_cast(get_value(state->args->arg2, 0), state->args->arg2);
 }
 
 
@@ -271,7 +276,7 @@ void _sqrt() {
     }
 
 #ifndef LAIKA //Realistically Laika won't ever need sqrt, + that creates linker errors with the CRT
-    *get_reg(state->args->arg1) = apply_cast((long long)sqrt(get_value(state->args->arg1)), state->args->arg1);
+    *get_reg(state->args->arg1, 0) = apply_cast((long long)sqrt(get_value(state->args->arg1, 0)), state->args->arg1);
 #endif
 }
 
@@ -280,7 +285,7 @@ void neg() {
 	return;
     }
 
-    *get_reg(state->args->arg1) = -apply_cast(get_value(state->args->arg1), state->args->arg1);
+    *get_reg(state->args->arg1, 0) = -apply_cast(get_value(state->args->arg1, 0), state->args->arg1);
 }
 
 void mul() {
@@ -291,8 +296,8 @@ void mul() {
 #ifdef LAIKA
     //MSVC wants to link __allmul, but a mul is just a lot of add, isn't it ?
 
-    long long v1 = *get_reg(state->args->arg1);
-    long long v2 = apply_cast(get_value(state->args->arg2));
+    long long v1 = *get_reg(state->args->arg1, 0);
+    long long v2 = apply_cast(get_value(state->args->arg2, 0));
     long long result = 0;
     int isNegative = 0;
 
@@ -310,7 +315,7 @@ void mul() {
     }
     v1 = isNegative ? -result : result;
 #else
-    *get_reg(state->args->arg1) *= apply_cast(get_value(state->args->arg2), state->args->arg2);
+    *get_reg(state->args->arg1, 0) *= apply_cast(get_value(state->args->arg2, 0), state->args->arg2);
 #endif
 }
 
@@ -322,8 +327,8 @@ void _div() {
 #ifdef LAIKA
     //MSVC wants to link __alldiv, but a div is just a lot of sub, isn't it ?
 
-    long long dividend = *get_reg(state->args->arg1);
-    long long divisor = get_value(state->args->arg2);
+    long long dividend = *get_reg(state->args->arg1, 0);
+    long long divisor = apply_cast(get_value(state->args->arg2, 0), state->args->arg2);
 
     long long quotient = 0;
     long long sign = 1;
@@ -343,7 +348,7 @@ void _div() {
 
     dividend = sign * quotient;
 #else
-    *get_reg(state->args->arg1) /= get_value(state->args->arg2);
+    *get_reg(state->args->arg1, 0) /= apply_cast(get_value(state->args->arg2, 0), state->args->arg2);
 #endif
 }
 
@@ -351,7 +356,19 @@ void mov() {
     if (!check_args(state->args, 0, 2)) {
 	return;
     }
-    *get_reg(state->args->arg1) = apply_cast(get_value(state->args->arg2), state->args->arg2);
+    int c = parse_argument_cast(state->args->arg1);
+    
+    if (c == -1) *get_reg(state->args->arg1, 0) = get_value(state->args->arg2, 0);
+    switch (c) {
+    case 1:
+	*((char *)get_reg(state->args->arg1, 1)) = (char)apply_cast(get_value(state->args->arg2, parse_argument_cast(state->args->arg2)), state->args->arg2);
+	break;
+    case 4:
+	*((int *)get_reg(state->args->arg1, 1)) = (int)apply_cast(get_value(state->args->arg2, parse_argument_cast(state->args->arg2)), state->args->arg2);
+	break;
+    default:
+	break;
+    }
 }
 
 void call() {
@@ -370,7 +387,7 @@ void push() {
 	return;
     }
     
-    long long value = apply_cast(get_value(state->args->arg1), state->args->arg1);
+    long long value = apply_cast(get_value(state->args->arg1, 0), state->args->arg1);
     if (value == 0 && !is_reg(state->args->arg1)) {
 	if (state->args->arg1[0] == '\\') {
 	    switch (state->args->arg1[1]) {
@@ -407,7 +424,7 @@ void pop() {
 	return;
     }
 
-    *get_reg(state->args->arg1) = state->STACK[state->STACK_IDX--];
+    *get_reg(state->args->arg1, 0) = state->STACK[state->STACK_IDX--];
 }
 
 void _and() {
@@ -415,7 +432,7 @@ void _and() {
 	return;
     }
 
-    state->registers->eax = get_value(state->args->arg1) & get_value(state->args->arg2);
+    state->registers->eax = get_value(state->args->arg1, 0) & get_value(state->args->arg2, 0);
 }
 
 void _xor() {
@@ -423,7 +440,7 @@ void _xor() {
 	return;
     }
 
-    state->registers->eax = get_value(state->args->arg1) ^ get_value(state->args->arg2);
+    state->registers->eax = get_value(state->args->arg1, 0) ^ get_value(state->args->arg2, 0);
 }
 
 void end() {
