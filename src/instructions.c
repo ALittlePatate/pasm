@@ -253,7 +253,7 @@ void sub() {
     if (!check_args(state->args, 0, 2)) {
 	return;
     }
-    *get_reg(state->args->arg1) -= get_value(state->args->arg2);
+    *get_reg(state->args->arg1) -= apply_cast(get_value(state->args->arg2), state->args->arg2);
 }
 
 void add() {
@@ -261,7 +261,7 @@ void add() {
 	return;
     }
 
-    *get_reg(state->args->arg1) += get_value(state->args->arg2);
+    *get_reg(state->args->arg1) += apply_cast(get_value(state->args->arg2), state->args->arg2);
 }
 
 
@@ -271,7 +271,7 @@ void _sqrt() {
     }
 
 #ifndef LAIKA //Realistically Laika won't ever need sqrt, + that creates linker errors with the CRT
-    *get_reg(state->args->arg1) = (long long)sqrt(get_value(state->args->arg1));
+    *get_reg(state->args->arg1) = apply_cast((long long)sqrt(get_value(state->args->arg1)), state->args->arg1);
 #endif
 }
 
@@ -280,7 +280,7 @@ void neg() {
 	return;
     }
 
-    *get_reg(state->args->arg1) = -get_value(state->args->arg1);
+    *get_reg(state->args->arg1) = -apply_cast(get_value(state->args->arg1), state->args->arg1);
 }
 
 void mul() {
@@ -292,7 +292,7 @@ void mul() {
     //MSVC wants to link __allmul, but a mul is just a lot of add, isn't it ?
 
     long long v1 = *get_reg(state->args->arg1);
-    long long v2 = get_value(state->args->arg2);
+    long long v2 = apply_cast(get_value(state->args->arg2));
     long long result = 0;
     int isNegative = 0;
 
@@ -310,7 +310,7 @@ void mul() {
     }
     v1 = isNegative ? -result : result;
 #else
-    *get_reg(state->args->arg1) *= get_value(state->args->arg2);
+    *get_reg(state->args->arg1) *= apply_cast(get_value(state->args->arg2), state->args->arg2);
 #endif
 }
 
@@ -351,7 +351,7 @@ void mov() {
     if (!check_args(state->args, 0, 2)) {
 	return;
     }
-    *get_reg(state->args->arg1) = get_value(state->args->arg2);
+    *get_reg(state->args->arg1) = apply_cast(get_value(state->args->arg2), state->args->arg2);
 }
 
 void call() {
@@ -370,7 +370,7 @@ void push() {
 	return;
     }
     
-    long long value = get_value(state->args->arg1);
+    long long value = apply_cast(get_value(state->args->arg1), state->args->arg1);
     if (value == 0 && !is_reg(state->args->arg1)) {
 	if (state->args->arg1[0] == '\\') {
 	    switch (state->args->arg1[1]) {
