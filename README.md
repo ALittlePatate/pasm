@@ -36,6 +36,7 @@ make lib
 Then link the library to your program, see [this example](tests/lib_use.c).<br>
 
 # Code examples
+- [a few functions of libc recoded in PASM](examples/minilibc/)
 - [hello world and arrays tests](examples/array.pasm)
 - [xor decryption of hello world](examples/xored_hello.pasm)
 - [keylogger](examples/keylogger.pasm)
