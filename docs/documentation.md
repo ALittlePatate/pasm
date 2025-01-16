@@ -92,7 +92,8 @@ The syntax is very close to x86 Intel Assembly. Here is a list of the operands a
 All the `jmp`-related operands (`je`, `jna`, ...) can have a number as argument, this way the program will jump to `x` lines (ex: `jmp 3` will jump 3 lines down).<br>
 All the operands are case-sensitive, meaning that `ADD` will be an invalid operand.<br>
 Please note that additional operands will be added in the future.<br>
-You can use the `&` and the `*` keywords just like in C to get the address and/or dereference and address. Example : `mov a1, &eax`
+You can use the `&` and the `*` keywords just like in C to get the address and/or dereference and address. Example : `mov a1, &eax`<br>
+You can also cast registers to `int` or `char` using the C style syntax: `cmp a1, (char)*a2`.<br>
 
 ## Arrays
 You can define an array using the keyword `set` like so :

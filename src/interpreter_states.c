@@ -64,8 +64,8 @@ void free__state() {
     free_(state->labels_values);
 
     for (int j = 0; j < state->num_arrays; j++) {
-		if (state->ARRAYS_NAME[j])
-			free_(state->ARRAYS_NAME[j]);
+	if (state->ARRAYS_NAME[j])
+	    free_(state->ARRAYS_NAME[j]);
         if (state->ARRAYS_VALUES[j])
             free_(state->ARRAYS_VALUES[j]);
     }
@@ -196,6 +196,7 @@ ARRAY_ERR add_array(char* line) {
             arr_char[i++] = (long long)* ptr++;
         }
         state->ARRAYS_VALUES[state->num_arrays++] = (long long *)arr_char;
+	free_(line_copy);
         return ARRAY_OK;
     }
     ptr = strtok_(ptr, ",");
@@ -266,6 +267,16 @@ void sanitize_arguments() { //removes trailing spaces
     for (int i = 0; state->args->arg2[i] != '\0'; i++)
         if (state->args->arg2[i] == ' ' || state->args->arg2[i] == '\t' || state->args->arg2[i] == '\n')
             state->args->arg2[i] = '\0';
+}
+
+int parse_argument_cast(char *arg) {
+    //possible casts : int, char
+
+    if (strncmp__(arg, "(char", 5) == 0)
+	return 1;
+    if (strncmp__(arg, "(int", 4) == 0)
+	return 4;
+    return -1;
 }
 
 int parse_arguments(char *line) {

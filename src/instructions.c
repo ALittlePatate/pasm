@@ -3,6 +3,7 @@
 #include "api.h"
 #include "libc.h"
 #include <math.h>
+#include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
 
@@ -14,12 +15,25 @@ bool is_array(char* arg) {
 }
 
 bool is_reg(char* arg) {
-    if (arg[0] == '&' || arg[0] == '*')
-        ++arg;
-    if (is_array(arg))
+    char *arg2 = strdup_(arg);
+    char *s = arg2;
+    strtok_(arg2, ")");
+    arg2 = strtok_(NULL, ")");
+    if (arg2 == NULL) {
+	arg2 = arg;
+    }
+
+    if (arg2[0] == '&' || arg2[0] == '*')
+        ++arg2;
+    if (is_array(arg2)) {
+	free_(s);
         return true;
-    return (strcmp__(arg, "eax") == 0) || (((arg[0] == 'a' &&
-    ('1' <= arg[1] && arg[1] <= '9'))) && strlen__(arg) == 2);
+    }
+    int r = (strcmp__(arg2, "eax") == 0) || (((arg2[0] == 'a' &&
+    ('1' <= arg2[1] && arg2[1] <= '9'))) && strlen__(arg2) == 2);
+
+    free_(s);
+    return r;
 }
 
 bool is_num(char* arg) {
@@ -45,15 +59,47 @@ bool check_args(s_arguments *args, int num_in_first, int num_args) {
     return true;
 }
 
-long long* get_reg(char* reg_char) {
+long long apply_cast(long long val, char *arg) {
+    long long v = val;
+    long long r = v;
+    int c = parse_argument_cast(arg);
+
+    if (c == -1) return val;
+    switch (c) {
+    case 1:
+	r = (long long)((char)v);
+	break;
+    case 4:
+	r = (long long)((int)v);
+	break;
+    default:
+	return val;
+    }
+    return r;
+}
+
+long long* get_reg(char* arg) {
+    char *reg_char = strdup_(arg);
+    char *s = reg_char;
+    strtok_(reg_char, ")");
+    reg_char = strtok_(NULL, ")");
+    if (reg_char == NULL) {
+	reg_char = arg;
+    }
+    
     int deref = reg_char[0] == '*';
 
     if (reg_char[0] == '&' || reg_char[0] == '*')
         ++reg_char;
-    for (int i = 0; i < state->num_arrays; i++)
-        if (strcmp__(state->ARRAYS_NAME[i], reg_char) == 0)
+    for (int i = 0; i < state->num_arrays; i++) {
+        if (strcmp__(state->ARRAYS_NAME[i], reg_char) == 0) {
+	    free_(s);
             return (long long *)&state->ARRAYS_VALUES[i];
-    switch (reg_char[1]) {
+	}
+    }
+    char c = reg_char[1];
+    free_(s);
+    switch (c) {
 	case '1' :
 	    return deref ? (long long*)state->registers->a1 : &state->registers->a1;
 	case '2' :
@@ -84,10 +130,10 @@ long long get_value(char* arg) {
 
     if (is_reg(arg)) {
         if (arg[0] == '&') {
-	    ret = (long long)get_reg(arg);
+	    return (long long)get_reg(arg);
         }
-		else {
-		ret = *get_reg(arg);
+	else {
+	    return *get_reg(arg);
         }
     }
     else {
@@ -119,6 +165,7 @@ void cmp() {
 
     long long a1_ = get_value(state->args->arg1);
     long long a2_ = get_value(state->args->arg2);
+    a2_ = apply_cast(a2_, state->args->arg2);
 
     if (a1_ == a2_) state->last_cmp_code = CMP_EQUAL;
     else if (a1_ > a2_) state->last_cmp_code = CMP_ABOVE;
@@ -304,7 +351,6 @@ void mov() {
     if (!check_args(state->args, 0, 2)) {
 	return;
     }
-
     *get_reg(state->args->arg1) = get_value(state->args->arg2);
 }
 
