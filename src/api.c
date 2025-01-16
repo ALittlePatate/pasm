@@ -53,6 +53,21 @@ void api_print() {
     dprintf(f, "%s", address);
 }
 
+void api_free() {
+    void *addr = (void *)state->STACK[state->STACK_IDX--];
+    free_(addr);
+}
+
+void api_malloc() {
+    long size = state->STACK[state->STACK_IDX--];
+#ifdef _WIN32
+    state->registers->eax = 0;
+    return;
+#else
+    state->registers->eax = (long long)malloc(size);
+#endif
+}
+
 void api_callrawaddr() {
     long long address = state->STACK[state->STACK_IDX--];
 

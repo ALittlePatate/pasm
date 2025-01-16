@@ -3,6 +3,8 @@
 
 void api_put();
 void api_print();
+void api_free();
+void api_malloc();
 void api_callrawaddr();
 
 // generated APIs here
@@ -15,6 +17,8 @@ void api_GetAsyncKeyState();
 static const command_t api_map[] = {
     {.command = "put", .fptr = api_put},
     {.command = "print", .fptr = api_print},
+    {.command = "malloc", .fptr = api_malloc},
+    {.command = "free", .fptr = api_free},
     {.command = "CallRawAddress", .fptr = api_callrawaddr},
 
 // generated APIs here
