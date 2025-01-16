@@ -381,5 +381,5 @@ void _xor() {
 }
 
 void end() {
-    state->should_exit = 0; //could use EAX for return code but i don't think i care
+    state->should_exit = 0;
 }

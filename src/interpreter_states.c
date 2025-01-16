@@ -87,6 +87,10 @@ int get_exit_state() {
     return state->should_exit;
 }
 
+int get_exit_code() {
+    return state->registers->eax;
+}
+
 LABEL_ERR add_label(char *label, int line) {
     if (label == NULL)
 	return LABEL_INVALID;
@@ -191,7 +195,7 @@ ARRAY_ERR add_array(char* line) {
             }
             arr_char[i++] = (long long)* ptr++;
         }
-        state->ARRAYS_VALUES[state->num_arrays++] = arr_char;
+        state->ARRAYS_VALUES[state->num_arrays++] = (long long *)arr_char;
         return ARRAY_OK;
     }
     ptr = strtok_(ptr, ",");

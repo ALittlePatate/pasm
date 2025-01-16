@@ -76,6 +76,7 @@ int init_state();
 void free__state();
 void set_exit_state(int exit_state);
 int get_exit_state();
+int get_exit_code();
 LABEL_ERR add_label(char *label, int line);
 ARRAY_ERR add_array(char *line);
 void sanitize_arguments();
