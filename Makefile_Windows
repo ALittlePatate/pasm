@@ -9,13 +9,15 @@ OBJ = $(SRC:.c=.o)
 NAME = pasm
 CC = C:\Program Files\Microsoft Visual Studio\2022\Community\VC\Tools\Llvm\x64\bin\clang
 CFLAGS = -Os -Iinclude -fno-asynchronous-unwind-tables -DUNICODE -D_UNICODE -m32 -fwritable-strings -DLAIKA -nostdlib -D_WIN32_WINNT=0x0501
+AR = C:\Program Files\Microsoft Visual Studio\2022\Community\VC\Tools\Llvm\x64\bin\llvm-ar
+RANLIB = C:\Program Files\Microsoft Visual Studio\2022\Community\VC\Tools\Llvm\x64\bin\llvm-ranlib
 
 all: $(NAME)
 
 lib: $(OBJ)
 	@if not exist bin (mkdir bin)
-	ar rc bin/$(NAME).lib $(OBJ)
-	ranlib bin/$(NAME).lib
+	$(AR) rc bin/$(NAME).lib $(OBJ)
+	$(RANLIB) bin/$(NAME).lib
 
 $(NAME): lib
 	$(CC) $(CFLAGS) -o bin/$(NAME) tests/interpreter.c -Lbin -lpasm
