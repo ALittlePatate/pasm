@@ -297,7 +297,7 @@ void mul() {
     //MSVC wants to link __allmul, but a mul is just a lot of add, isn't it ?
 
     long long v1 = *get_reg(state->args->arg1, 0);
-    long long v2 = apply_cast(get_value(state->args->arg2, 0));
+    long long v2 = apply_cast(get_value(state->args->arg2, 0), state->args->arg2);
     long long result = 0;
     int isNegative = 0;
 
